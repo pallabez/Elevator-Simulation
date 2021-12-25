@@ -11,14 +11,14 @@ let floorChange = function(elevator, nextFloor) {
 
 for(let i of up) {
     i.addEventListener('click', function(event) {
-        let currFloor = parseInt(elevator.getAttribute("on-floor"));
-        if(currFloor < maxFloors - 1) floorChange(elevator, currFloor + 1);
+        let targetFloor = i.getAttribute("floor");
+        floorChange(elevator, targetFloor);
     });
 }
 
 for(let i of down) {
     i.addEventListener('click', function(event) {
-        let currFloor = parseInt(elevator.getAttribute("on-floor"));
-        if(currFloor > 0) floorChange(elevator, currFloor - 1);
+        let targetFloor = i.getAttribute("floor");
+        floorChange(elevator, targetFloor);
     });
 }

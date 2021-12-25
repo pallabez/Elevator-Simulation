@@ -39,7 +39,7 @@
     justify-content: center;
 }
 
-.floor::after {
+.floor:after {
     position: absolute;
     left: 61vw;
     top: 8rem;
