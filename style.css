@@ -1,13 +1,33 @@
+*{
+    list-style: none;
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
 .wrapper {
     display: flex;
     justify-content: center;
 }
 
 .building {
+    position: relative;
     width: 60vw;
 }
 
+.elevator {
+    position: absolute;
+    left: 7rem;
+    bottom: 0px;
 
+    background-color: teal;
+    height: 5rem;
+    max-width: 3rem;
+    width: 5vw;
+    min-width: 2rem;
+}
 
 .floor {
     position: relative;
