@@ -4,11 +4,21 @@ let down = document.querySelectorAll(".down-btn");
 let elevator = document.querySelector(".elevator");
 let maxFloors = 4;
 
-let floorChange = function(elevator, nextFloor) {
-    elevator.setAttribute("on-Floor", nextFloor);
-    elevator.style.bottom = nextFloor * 10 + 'rem';
+let floorChange = function(elevator, targetFloor) {
+    let currFloor = elevator.getAttribute("on-Floor");
+    if(currFloor == targetFloor) return;
+    else {
+        let duration = (targetFloor - currFloor) * 2;
+        if(duration < 0) duration *= -1;
+
+        elevator.setAttribute("on-floor", targetFloor);
+        elevator.style.transition = "all " + duration + "s linear";
+        elevator.style.bottom = targetFloor * 10 + 'rem';
+    }
 }
 
+
+//Event listener for every up button
 for(let i of up) {
     i.addEventListener('click', function(event) {
         let targetFloor = i.getAttribute("floor");
@@ -16,6 +26,7 @@ for(let i of up) {
     });
 }
 
+//Event listener for every down button
 for(let i of down) {
     i.addEventListener('click', function(event) {
         let targetFloor = i.getAttribute("floor");

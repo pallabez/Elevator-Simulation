@@ -27,6 +27,8 @@
     max-width: 3rem;
     width: 5vw;
     min-width: 2rem;
+
+    transition: all 1s linear;
 }
 
 .floor {
