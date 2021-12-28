@@ -24,13 +24,27 @@
     color: rgb(100, 100, 100);
     background-color: whitesmoke;
     border: 2px rgb(100, 100, 100) solid;
-    
-    width: 7rem;
+
+    width: 8rem;
     transition: all 0.1s;
 }
 
 .add-btn:hover {
     background-color: rgb(100, 100, 100);
+    color: whitesmoke;
+}
+
+.remove-btn {
+    color: rgb(207, 39, 33);
+    background-color: whitesmoke;
+    border: 2px rgb(207, 39, 33) solid;
+
+    width: 8rem;
+    transition: all 0.1s;
+}
+
+.remove-btn:hover {
+    background-color: rgb(207, 39, 33);
     color: whitesmoke;
 }
 
@@ -49,8 +63,6 @@
     max-width: 3rem;
     width: 5vw;
     min-width: 2rem;
-
-    transition: all 1s linear;
 }
 
 .floor {

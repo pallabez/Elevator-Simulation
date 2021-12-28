@@ -1,5 +1,7 @@
-let elevator = document.querySelector(".elevator");
 let maxFloors = 3;
+
+//Moves elevator to target location
+let elevator = document.querySelector(".elevator");
 
 let floorChange = function(elevator, targetFloor) {
     let currFloor = elevator.getAttribute("on-Floor");
@@ -9,10 +11,11 @@ let floorChange = function(elevator, targetFloor) {
     if(duration < 0) duration *= -1;
 
     elevator.setAttribute("on-floor", targetFloor);
-    elevator.style.transition = "all " + duration + "s linear";
+    elevator.style.transition = "bottom " + duration + "s linear";
     elevator.style.bottom = targetFloor * 10 + 'rem';
 }
 
+//Adds floor when add button is clicked
 let add = document.querySelector('.add-btn');
 let topFloor = document.querySelector('.top');
 
@@ -35,6 +38,20 @@ add.addEventListener('click', function() {
     refreshFloorNumber();
     document.querySelector('.top .down-btn').setAttribute("floor", maxFloors);
 });
+
+let remove = document.querySelector('.remove-btn');
+
+remove.addEventListener('click', function() {
+    let floors = document.querySelectorAll('.floor');
+
+    let topSecondFloor = floors[1];
+    topSecondFloor.remove();
+
+    maxFloors--;
+    refreshFloorNumber();
+    document.querySelector('.top .down-btn').setAttribute("floor", maxFloors);
+})
+
 
 //Refresh listener for every up and down button
 function refreshListeners() {
