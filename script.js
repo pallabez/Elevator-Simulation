@@ -1,16 +1,25 @@
 let maxFloors = 3;
+let queue = [];
 
 //Moves elevator to target location
 let floorChange = function(elevator, targetFloor) {
     let currFloor = elevator.getAttribute("on-Floor");
-    if(currFloor == targetFloor) return;
 
     let duration = (targetFloor - currFloor) * 2;
-    if(duration < 0) duration *= -1;
+    if(duration < 0) duration *= -1;        //target floor can be below current floor
 
     elevator.setAttribute("on-floor", targetFloor);
     elevator.style.transition = "bottom " + duration + "s linear";
     elevator.style.bottom = targetFloor * 10 + 'rem';
+    elevator.classList.add('busy');
+
+    setTimeout(() => {
+        elevator.classList.remove('busy');
+        if(queue.length) {
+            let nextFloor = queue.shift();
+            floorChange(elevator, nextFloor);
+        }
+    }, duration * 1000);
 }
 
 //Adds floor when add button is clicked
@@ -58,23 +67,34 @@ function removeFloor() {
     refreshTopFloor();
 }
 
+function elevatorRoute(targetFloor) {
+    let elevator = document.querySelector(".elevator");
+
+    if(elevator.classList.contains('busy')) {
+        queue.push(targetFloor);
+        console.log(queue);
+    } else {
+        floorChange(elevator, targetFloor);
+    }
+}
+
 //Refresh listener for every up and down button
 function refreshListeners() {
-    let elevator = document.querySelector(".elevator");
+    //let elevator = document.querySelector(".elevator");
     let up = document.querySelectorAll(".up-btn");
     let down = document.querySelectorAll(".down-btn");
 
     for(let i of up) {
         i.addEventListener('click', function() {
             let targetFloor = i.getAttribute("floor");
-            floorChange(elevator, targetFloor);
+            elevatorRoute(targetFloor);
         });
     }
     
     for(let i of down) {
         i.addEventListener('click', function() {
             let targetFloor = i.getAttribute("floor");
-            floorChange(elevator, targetFloor);
+            elevatorRoute(targetFloor);
         });
     }    
 }
