@@ -13,13 +13,25 @@ let floorChange = function(elevator, targetFloor) {
     elevator.style.bottom = targetFloor * 10 + 'rem';
     elevator.classList.add('busy');
 
+    let doorLeft = document.querySelector('.door-left');
+    let doorRight = document.querySelector('.door-right');
+    setTimeout(() => {
+        doorLeft.style.width = "0";
+        doorRight.style.width = "0";
+    }, duration * 1000)
+
+    setTimeout(() => {
+        doorLeft.style.width = "50%";
+        doorRight.style.width = "50%";
+    }, duration * 1000 + 2000)
+    
     setTimeout(() => {
         elevator.classList.remove('busy');
         if(queue.length) {
             let nextFloor = queue.shift();
             floorChange(elevator, nextFloor);
         }
-    }, duration * 1000);
+    }, duration * 1000 + 4000);
 }
 
 //Adds floor when add button is clicked
