@@ -54,7 +54,18 @@ function addFloor() {
     topFloor.after(floor);
     maxFloors++;
     
-    refreshListeners();
+    let up = document.querySelectorAll('.floor .up-btn')[0];
+    let down = document.querySelectorAll('.floor .down-btn')[1];
+    console.log(up, down);
+    up.addEventListener('click', function() {
+        let targetFloor = up.getAttribute("floor");
+        elevatorRoute(targetFloor);
+    });
+    down.addEventListener('click', function() {
+        let targetFloor = down.getAttribute("floor");
+        elevatorRoute(targetFloor);
+    });
+
     refreshTopFloor();
 }
 
@@ -79,6 +90,7 @@ function removeFloor() {
     refreshTopFloor();
 }
 
+//Pushes the tasks into queue if all elevators are busy
 function elevatorRoute(targetFloor) {
     let elevator = document.querySelector(".elevator");
 
