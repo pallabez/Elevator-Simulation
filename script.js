@@ -10,7 +10,7 @@ let floorChange = function(elevator, targetFloor) {
 
     elevator.setAttribute("on-floor", targetFloor);
     elevator.style.transition = "bottom " + duration + "s linear";
-    elevator.style.bottom = targetFloor * 10 + 'rem';
+    elevator.style.bottom = targetFloor * 10 + 0.1 + 'rem';
     elevator.classList.add('busy');
 
     let doorLeft = document.querySelector('.door-left');
@@ -56,7 +56,6 @@ function addFloor() {
     
     let up = document.querySelectorAll('.floor .up-btn')[0];
     let down = document.querySelectorAll('.floor .down-btn')[1];
-    console.log(up, down);
     up.addEventListener('click', function() {
         let targetFloor = up.getAttribute("floor");
         elevatorRoute(targetFloor);
