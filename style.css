@@ -1,5 +1,5 @@
 :root {
-    --lift-door: #555555;
+    --lift-door: linear-gradient(0deg ,#3a3a3a, #888888);
     --lift-background: #d2d3a4;
 
     --border-color: #072227;
@@ -28,9 +28,13 @@
 
 .btn {
     padding: 8px;
-    margin: 1rem 0;
+    margin: 20px;
     text-align: center;
     border-radius: 5px;
+}
+
+.controller {
+    display: flex;
 }
 
 .add-btn {
@@ -84,9 +88,9 @@
 .door-left, .door-right {
     width: 50%;
     height: 100%;
-    background-color: var(--lift-door);
+    background: var(--lift-door);
     border: 2px solid var(--border-color);
-
+    z-index: 2;
     transition: width 2s linear;
 }
 
@@ -137,3 +141,4 @@
         width: 100vw;
     }
 }
+
