@@ -1,4 +1,5 @@
 let maxFloors = 3;
+let numeberOfElevators = 2;
 let queue = [];
 
 //Moves elevator to target location
@@ -88,6 +89,30 @@ function removeFloor() {
     maxFloors--;
     refreshTopFloor();
 }
+
+let addLift = document.querySelector('#add-lift');
+addLift.addEventListener('click', addElevator);
+
+function addElevator() {
+    numeberOfElevators++;
+    let elevators = document.querySelectorAll('.elevator');
+    let lastELevator = elevators[elevators.length - 1];
+    
+    let newElevator = document.createElement('div');
+    newElevator.classList.add('elevator');
+    newElevator.setAttribute('on-floor', "0");
+    newElevator.setAttribute('pos', numeberOfElevators);
+
+    newElevator.innerHTML = `
+        <div class="door"></div>
+        <div class="door"></div>`;
+
+    lastELevator.after(newElevator)
+
+    console.log(lastELevator);
+    refreshElevators();
+}
+
 
 //Pushes the tasks into queue if all elevators are busy
 function elevatorRoute(targetFloor) {
