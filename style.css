@@ -72,7 +72,7 @@
 
 .elevator {
     position: absolute;
-    left: 7rem;
+    left: 120px;
     bottom: 0px;
 
     background-color: var(--lift-background);
@@ -85,7 +85,7 @@
     justify-content: space-between;
 }
 
-.door-left, .door-right {
+.door {
     width: 50%;
     height: 100%;
     background: var(--lift-door);

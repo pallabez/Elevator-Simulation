@@ -13,16 +13,16 @@ let floorChange = function(elevator, targetFloor) {
     elevator.style.bottom = targetFloor * 10 + 0.1 + 'rem';
     elevator.classList.add('busy');
 
-    let doorLeft = document.querySelector('.door-left');
-    let doorRight = document.querySelector('.door-right');
+    let doors = elevator.querySelectorAll('.door');
+    
     setTimeout(() => {
-        doorLeft.style.width = "0";
-        doorRight.style.width = "0";
+        doors[0].style.width = "0";
+        doors[1].style.width = "0";
     }, duration * 1000)
 
     setTimeout(() => {
-        doorLeft.style.width = "50%";
-        doorRight.style.width = "50%";
+        doors[0].style.width = "50%";
+        doors[1].style.width = "50%";
     }, duration * 1000 + 2000)
     
     setTimeout(() => {
@@ -91,14 +91,16 @@ function removeFloor() {
 
 //Pushes the tasks into queue if all elevators are busy
 function elevatorRoute(targetFloor) {
-    let elevator = document.querySelector(".elevator");
+    let elevators = document.querySelectorAll(".elevator");
 
-    if(elevator.classList.contains('busy')) {
-        queue.push(targetFloor);
-        console.log(queue);
-    } else {
-        floorChange(elevator, targetFloor);
+    for(let i of elevators) {
+        if(!i.classList.contains('busy')) {
+            floorChange(i, targetFloor);
+            return;
+        }
     }
+    queue.push(targetFloor);
+    console.log(queue);
 }
 
 //Refresh listener for every up and down button
@@ -132,3 +134,11 @@ function refreshFloorNumber() {
     }
 }
 refreshFloorNumber();
+
+function refreshElevators() {
+    let elevators = document.querySelectorAll('.elevator');
+    for(let i = 0; i < elevators.length; i++) {
+        elevators[i].style.left = 120 + (i * 60) + 'px';
+    }
+}
+refreshElevators();
