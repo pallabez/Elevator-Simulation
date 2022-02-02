@@ -12,24 +12,25 @@
 <body>
     <div class="wrapper">
         <section class="controller">
-            <div class="btn add-btn">
-                <i class="fas fa-plus"></i>
-                <span>Add Floor</span>
+            <div class="btn-container-main">
+                <div class="btn remove-btn">
+                    <i class="fas fa-minus"></i>
+                    <span>Remove Floor</span>
+                </div>
+                <div class="btn add-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Floor</span>
+                </div>
             </div>
-            <div class="btn remove-btn">
-                <i class="fas fa-minus"></i>
-                <span>Remove Floor</span>
-            </div>
-            <div class="btn add-btn" id="add-lift">
-                <i class="fas fa-plus"></i>
-                <span>Add Lift</span>
-            </div>
-            <div class="btn remove-btn" id="remove-lift">
-                <i class="fas fa-minus"></i>
-                <span>Remove Lift</span>
-            </div>
-            <div class="repo-link btn">
-                <a href="https://github.com/pallabez/Elevator-Simulation" target="_blank">Github Repo</a>
+            <div class="btn-container-main">
+                <div class="btn remove-btn" id="remove-lift">
+                    <i class="fas fa-minus"></i>
+                    <span>Remove Lift</span>
+                </div>
+                <div class="btn add-btn" id="add-lift">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Lift</span>
+                </div>
             </div>
         </section>
         <main class="building">
@@ -70,7 +71,9 @@
         </main>
     </div>
 
-
+    <div class="repo-link btn">
+        <a href="https://github.com/pallabez/Elevator-Simulation" target="_blank">Github Repo</a>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

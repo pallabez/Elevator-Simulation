@@ -28,13 +28,27 @@
 
 .btn {
     padding: 8px;
-    margin: 20px;
     text-align: center;
     border-radius: 5px;
+    margin: 4px 6px;
 }
 
 .controller {
     display: flex;
+    justify-content: center;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-container-main {
+    display: flex;
+    margin: 0 20px;
+}
+
+.btn-text {
+    margin-top: 4px;
+    padding: 8px;
+    font-size: 25;
 }
 
 .add-btn {
