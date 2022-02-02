@@ -107,12 +107,23 @@ function addElevator() {
         <div class="door"></div>
         <div class="door"></div>`;
 
-    lastELevator.after(newElevator)
+    lastELevator.after(newElevator);
 
-    console.log(lastELevator);
     refreshElevators();
 }
 
+let removeLift = document.querySelector('#remove-lift');
+removeLift.addEventListener('click', removeElevator);
+
+function removeElevator() {
+    if(numeberOfElevators == 1) return;
+    
+    let elevators = document.querySelectorAll('.elevator');
+    let lastELevator = elevators[elevators.length - 1];
+
+    lastELevator.remove();
+    numeberOfElevators--;
+}
 
 //Pushes the tasks into queue if all elevators are busy
 function elevatorRoute(targetFloor) {
