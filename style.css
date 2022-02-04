@@ -147,6 +147,10 @@
     background-color: var(--down-button-color-hover);
 }
 
+.repo-link {
+    margin-top: 20px;
+}
+
 @media screen and (max-width: 768px) {
     .wrapper {
         justify-content: center;
