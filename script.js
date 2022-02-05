@@ -94,6 +94,10 @@ let addLift = document.querySelector('#add-lift');
 addLift.addEventListener('click', addElevator);
 
 function addElevator() {
+    let width = window.innerWidth;
+    if(width < 769 && numeberOfElevators >= (width - 150)/ 80) return;
+    if(width >= 769 && numeberOfElevators >= (width - 300)/ 110) return;
+
     numeberOfElevators++;
     let elevators = document.querySelectorAll('.elevator');
     let lastELevator = elevators[elevators.length - 1];
