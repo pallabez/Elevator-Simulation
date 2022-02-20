@@ -133,12 +133,23 @@ function removeElevator() {
 function elevatorRoute(targetFloor) {
     let elevators = document.querySelectorAll(".elevator");
 
+    let elevator = null, minDistance = Infinity;
     for(let i of elevators) {
         if(!i.classList.contains('busy')) {
-            floorChange(i, targetFloor);
-            return;
+            let distance = parseInt(i.getAttribute('on-floor')) - targetFloor;
+            if(distance < 0) distance *= -1;
+
+            if(distance == 0) {
+                floorChange(i, targetFloor);
+                return;
+            }
+            if(distance < minDistance) {
+                elevator = i;
+                minDistance = distance;
+            } 
         }
     }
+    if(elevator) return floorChange(elevator, targetFloor);
     queue.push(targetFloor);
     console.log(queue);
 }
