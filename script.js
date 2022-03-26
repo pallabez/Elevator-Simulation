@@ -1,3 +1,5 @@
+"use strict";
+
 let maxFloors = 3;
 let numeberOfElevators = 2;
 let queue = [];
