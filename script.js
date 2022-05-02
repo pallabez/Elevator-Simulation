@@ -12,20 +12,20 @@ let floorChange = function(elevator, targetFloor) {
     if(duration < 0) duration *= -1;        //target floor can be below current floor
 
     elevator.setAttribute("on-floor", targetFloor);
-    elevator.style.transition = "bottom " + duration + "s linear";
-    elevator.style.bottom = targetFloor * 10 + 0.1 + 'rem';
+    elevator.style.transition = `transform ${duration}s linear`;
+    elevator.style.transform = `translateY(${-(targetFloor * 10 + 0.1)}rem)`;
     elevator.classList.add('busy');
 
     let doors = elevator.querySelectorAll('.door');
     
     setTimeout(() => {
-        doors[0].style.width = "0";
-        doors[1].style.width = "0";
+        doors[0].style.transform = `translateX(-1.5rem)`
+        doors[1].style.transform = `translateX(1.5rem)`
     }, duration * 1000)
 
     setTimeout(() => {
-        doors[0].style.width = "50%";
-        doors[1].style.width = "50%";
+        doors[0].style.transform = `translateX(0)`
+        doors[1].style.transform = `translateX(0)`
     }, duration * 1000 + 2000)
     
     setTimeout(() => {

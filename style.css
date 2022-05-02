@@ -97,6 +97,9 @@
     
     display: flex;
     justify-content: space-between;
+    will-change: transform;
+
+    overflow: hidden;
 }
 
 .door {
@@ -105,7 +108,8 @@
     background: var(--lift-door);
     border: 2px solid var(--border-color);
     z-index: 2;
-    transition: width 2s linear;
+    transition: transform 2s linear;
+    will-change: transform;
 }
 
 .floor {
