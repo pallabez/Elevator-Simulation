@@ -24,8 +24,8 @@ let floorChange = function(elevator, targetFloor) {
     }, duration * 1000)
 
     setTimeout(() => {
-        doors[0].style.transform = `translateX(0)`
-        doors[1].style.transform = `translateX(0)`
+        doors[0].style.transform = "none"
+        doors[1].style.transform = "none"
     }, duration * 1000 + 2000)
     
     setTimeout(() => {

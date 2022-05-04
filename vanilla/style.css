@@ -96,7 +96,6 @@
     z-index: 1;
     
     display: flex;
-    justify-content: space-between;
     will-change: transform;
 
     overflow: hidden;
