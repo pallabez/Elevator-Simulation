@@ -29,7 +29,8 @@ io.on("connection", (socket) => {
   console.log(`Connected ${socket.id}`, count);
 
   // Sync up state on new connection
-  socket.emit("sync", { liftStates, floors })
+  const lifts = liftStates.map(lift => lift.floor);
+  socket.emit("sync", { lifts, floors })
 
   // Add floor
   socket.on("addFloor", async () => {
@@ -43,8 +44,23 @@ io.on("connection", (socket) => {
   });
 
   // Add Lift
+  socket.on('addLift', () => {
+    liftStates[liftStates.length] = {
+      floor: 0,
+      available: true,
+    }
+
+    io.emit('addLift');
+  });
 
   // Remove Lift
+  socket.on('removeLift', () => {
+    if(liftStates.length <= 1) return;
+    
+    liftStates.pop();
+
+    io.emit('removeLift');
+  })
 
   // Lift called
   socket.on("called", callLift);
@@ -56,7 +72,6 @@ const callLift = (calledOn) => {
   liftStates.forEach((lift, i) => {
     if(!lift.available) return;
 
-    console.log(i, lift)
     distance = Math.abs(calledOn - lift.floor);
 
     if(distance < minDistance) {
@@ -71,17 +86,12 @@ const callLift = (calledOn) => {
     setTimeout(() => {
       liftStates[pos].available = true;
 
-      // Checks queue
-      if(queue.length) {
-        console.log("queue", queue[0]);
-        callLift(queue.shift());
-      }
+      if(queue.length) callLift(queue.shift());
     }, (distance + 4) * 1000);
 
     return io.emit('liftChange', pos, calledOn);
   }
   queue.push(calledOn);
-  console.log(queue);
 }
 
 httpServer.listen(3000);

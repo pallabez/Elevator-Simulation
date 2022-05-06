@@ -1,7 +1,8 @@
 "use strict";
 
 let maxFloors = 0;
-let numeberOfElevators = 2;
+let numeberOfElevators = 1;
+let liftsQueue = {};
 
 const socket = io("ws://localhost:3000");
 
@@ -9,14 +10,15 @@ socket.on("connect", () => {
     console.log(socket.id);
 });
 
-socket.on("sync", ({ simulationState, floors}) => {
-    // Set lifts 
+socket.on("sync", ({ lifts, floors}) => {
+    setLifts(lifts);
     setFloors(floors);
 })
 
 socket.on("floorChange", floor => setFloors(floor));
-
 socket.on("liftChange", (pos, targetFloor) => floorChange(pos, targetFloor));
+socket.on('addLift', () => addElevator());
+socket.on('removeLift', () => removeElevator());
 
 // Sets the floor to the desired result
 let setFloors = function(floors) {
@@ -25,10 +27,22 @@ let setFloors = function(floors) {
     }
 }
 
-let liftQueue = {
-    0: [],
-    1: [],
-};
+let renderLifts = (liftsNumber) => {
+    while(numeberOfElevators != liftsNumber) {
+        (numeberOfElevators < liftsNumber) ? addElevator() : removeElevator();
+    }
+}
+
+let setLifts = function(lifts) {
+    renderLifts(lifts.length);
+    const elevators = document.querySelectorAll('.elevator');
+    lifts.forEach((pos, i) => {
+        liftsQueue[i] = [];
+        elevators[i].setAttribute("on-floor", pos);
+        elevators[i].style.transition = `none`;
+        elevators[i].style.transform = `translateY(${-(pos * 10 + 0.1)}rem)`
+    });
+}
 
 // Moves elevator to target location
 let floorChange = function(pos, targetFloor) {
@@ -36,7 +50,7 @@ let floorChange = function(pos, targetFloor) {
     const elevator = elevators[pos];
 
     if(elevator.classList.contains('busy')) {
-        return liftQueue[pos].push(targetFloor);
+        return liftsQueue[pos].push(targetFloor);
     }
 
     let currFloor = elevator.getAttribute("on-Floor");
@@ -61,10 +75,8 @@ let floorChange = function(pos, targetFloor) {
     
     setTimeout(() => {
         elevator.classList.remove('busy');
-
-        if(liftQueue[pos].length) {
-            floorChange(pos, liftQueue[pos].shift())
-        }
+        if(liftsQueue[pos].length) floorChange(pos, liftsQueue[pos].shift())
+        
     }, duration * 1000 + 4000);
 }
 
@@ -115,7 +127,7 @@ function removeFloor() {
 
 // Add lift
 let addLift = document.querySelector('#add-lift');
-addLift.addEventListener('click', addElevator);
+addLift.addEventListener('click', () => socket.emit('addLift'));
 
 function addElevator() {
     let width = window.innerWidth;
@@ -140,25 +152,24 @@ function addElevator() {
     refreshElevators();
 }
 
-const btnUp = document.querySelector(".up-btn");
-const btnDown = document.querySelector(".down-btn")
-btnUp.addEventListener('click', () => socket.emit("called", btnUp.getAttribute("floor")));
-btnDown.addEventListener('click', () => socket.emit("called", btnDown.getAttribute("floor")));
-
-
+// Remove Lift
 let removeLift = document.querySelector('#remove-lift');
-removeLift.addEventListener('click', removeElevator);
+removeLift.addEventListener('click', () => socket.emit("removeLift"));
 
 function removeElevator() {
     if(numeberOfElevators == 1) return;
     
     let elevators = document.querySelectorAll('.elevator');
     let lastELevator = elevators[elevators.length - 1];
-
+    
     lastELevator.remove();
     numeberOfElevators--;
 }
 
+const btnUp = document.querySelector(".up-btn");
+const btnDown = document.querySelector(".down-btn")
+btnUp.addEventListener('click', () => socket.emit("called", btnUp.getAttribute("floor")));
+btnDown.addEventListener('click', () => socket.emit("called", btnDown.getAttribute("floor")));
 
 function refreshElevators() {
     let elevators = document.querySelectorAll('.elevator');
