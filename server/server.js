@@ -94,4 +94,4 @@ const callLift = (calledOn) => {
   queue.push(calledOn);
 }
 
-httpServer.listen(3000);
+httpServer.listen(process.env.PORT || 3000);
