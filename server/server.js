@@ -6,7 +6,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://127.0.0.1:5500"
+    origins: ["https://stupendous-toffee-aa92d0.netlify.app/", "http://127.0.0.1:5500"]
   }
 });
 
