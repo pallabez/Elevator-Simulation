@@ -4,7 +4,7 @@ let maxFloors = 0;
 let numeberOfElevators = 1;
 let liftsQueue = {};
 
-const socket = io("ws://localhost:3000");
+const socket = io("ws://kuro-lift-simulation.herokuapp.com");
 
 socket.on("connect", () => {
     console.log(socket.id);
