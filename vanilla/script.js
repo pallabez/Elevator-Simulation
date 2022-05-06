@@ -154,7 +154,14 @@ function addElevator() {
 
 // Remove Lift
 let removeLift = document.querySelector('#remove-lift');
-removeLift.addEventListener('click', () => socket.emit("removeLift"));
+removeLift.addEventListener('click', () => {
+    let elevators = document.querySelectorAll('.elevator');
+    let lastELevator = elevators[elevators.length - 1];
+
+    if(lastELevator.classList.contains('busy')) return alert("Last Elevator is currently operating. Unable to remove!");   
+    
+    socket.emit("removeLift");
+});
 
 function removeElevator() {
     if(numeberOfElevators == 1) return;
