@@ -1,0 +1,28 @@
+{
+  "name": "simulate-elevator",
+  "version": "1.0.0",
+  "description": "A project to simulate multiple lifts in a building!",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server/server.js",
+    "dev": "nodemon ./server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pallabez/Elevator-Simulation.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pallabez/Elevator-Simulation/issues"
+  },
+  "homepage": "https://github.com/pallabez/Elevator-Simulation#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "socket.io": "^4.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}

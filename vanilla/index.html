@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <script src="https://kit.fontawesome.com/a44b4d40da.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous" defer></script>
+    <script src="https://kit.fontawesome.com/a44b4d40da.js" crossorigin="anonymous" defer></script>
+    <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -34,39 +36,16 @@
             </div>
         </section>
         <main class="building">
-            <div class="elevator" on-floor="0" pos="1">
-                <div class="door"></div>
-                <div class="door"></div>
-            </div>
-            <div class="elevator" on-floor="0" pos="2">
-                <div class="door"></div>
-                <div class="door"></div>
-            </div>
-            <div class="floor top">
-                <div class="btn-container">
-                    <div class="btn down-btn" floor="3">Down</div>
-                </div>
-                <div class="floor-number"></div>
-            </div>
-            <div class="floor">
-                <div class="btn-container">
-                    <div class="btn up-btn" floor="2">Up</div>
-                    <div class="btn down-btn" floor="2">Down</div>
-                </div>
-                <div class="floor-number"></div>
-            </div>
-            <div class="floor">
-                <div class="btn-container">
-                    <div class="btn up-btn" floor="1">Up</div>
-                    <div class="btn down-btn" floor="1">Down</div>
-                </div>
-                <div class="floor-number"></div>
-            </div>
             <div class="floor">
                 <div class="btn-container">
                     <div class="btn up-btn" floor="0">Up</div>
+                    <div class="btn down-btn" floor="0">Down</div>
                 </div>
-                <div class="floor-number"></div>
+                <div class="floor-number">Floor 0</div>
+            </div>
+            <div class="elevator" on-floor="0" pos="1">
+                <div class="door"></div>
+                <div class="door"></div>
             </div>
         </main>
     </div>
@@ -74,6 +53,5 @@
     <div class="repo-link btn">
         <a href="https://github.com/pallabez/Elevator-Simulation" target="_blank">Github Repo</a>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>

@@ -1,15 +1,60 @@
 "use strict";
 
-let maxFloors = 3;
-let numeberOfElevators = 2;
-let queue = [];
+let maxFloors = 0;
+let numeberOfElevators = 1;
+let liftsQueue = {};
 
-//Moves elevator to target location
-let floorChange = function(elevator, targetFloor) {
+const socket = io("https://kuro-lift-simulation.herokuapp.com");
+
+socket.on("connect", () => {
+    console.log(socket.id);
+});
+
+socket.on("sync", ({ lifts, floors}) => {
+    setLifts(lifts);
+    setFloors(floors);
+})
+
+socket.on("floorChange", floor => setFloors(floor));
+socket.on("liftChange", (pos, targetFloor) => floorChange(pos, targetFloor));
+socket.on('addLift', () => addElevator());
+socket.on('removeLift', () => removeElevator());
+
+// Sets the floor to the desired result
+let setFloors = function(floors) {
+    while(floors != maxFloors) {
+        (floors > maxFloors) ? addFloor(): removeFloor();
+    }
+}
+
+let renderLifts = (liftsNumber) => {
+    while(numeberOfElevators != liftsNumber) {
+        (numeberOfElevators < liftsNumber) ? addElevator() : removeElevator();
+    }
+}
+
+let setLifts = function(lifts) {
+    renderLifts(lifts.length);
+    const elevators = document.querySelectorAll('.elevator');
+    lifts.forEach((pos, i) => {
+        liftsQueue[i] = [];
+        elevators[i].setAttribute("on-floor", pos);
+        elevators[i].style.transition = `none`;
+        elevators[i].style.transform = `translateY(${-(pos * 10 + 0.1)}rem)`
+    });
+}
+
+// Moves elevator to target location
+let floorChange = function(pos, targetFloor) {
+    const elevators = document.querySelectorAll('.elevator');
+    const elevator = elevators[pos];
+
+    if(elevator.classList.contains('busy')) {
+        return liftsQueue[pos].push(targetFloor);
+    }
+
     let currFloor = elevator.getAttribute("on-Floor");
-
-    let duration = (targetFloor - currFloor) * 2;
-    if(duration < 0) duration *= -1;        //target floor can be below current floor
+    let duration = Math.abs(targetFloor - currFloor) * 2;      //target floor can be below current floor
 
     elevator.setAttribute("on-floor", targetFloor);
     elevator.style.transition = `transform ${duration}s linear`;
@@ -30,70 +75,59 @@ let floorChange = function(elevator, targetFloor) {
     
     setTimeout(() => {
         elevator.classList.remove('busy');
-        if(queue.length) {
-            let nextFloor = queue.shift();
-            floorChange(elevator, nextFloor);
-        }
+        if(liftsQueue[pos].length) floorChange(pos, liftsQueue[pos].shift())
+        
     }, duration * 1000 + 4000);
 }
 
-//Adds floor when add button is clicked
+function customCreateElement({ type="div", attributes={}, text="" }) {
+    const element = document.createElement(type);
+    Object.keys(attributes).forEach(key => {
+        element.setAttribute(key, attributes[key]);
+    })
+
+    element.textContent = text;
+    
+    return element;
+}
+
+// Adds floor 
 let add = document.querySelector('.add-btn');
-add.addEventListener('click', addFloor);
+add.addEventListener('click', () => socket.emit("addFloor"));
 
 function addFloor() {
-    let topFloor = document.querySelector('.top');
-    let floor = document.createElement('div');
-    
-    floor.classList.add("floor");
-    floor.innerHTML = `
-        <div class="btn-container">
-            <div class="btn up-btn" floor="${maxFloors}">Up</div>
-            <div class="btn down-btn" floor="${maxFloors}">Down</div>
-        </div>
-        <div class="floor-number">Floor ${maxFloors}</div>
-        `;
-
-    topFloor.after(floor);
     maxFloors++;
-    
-    let up = document.querySelectorAll('.floor .up-btn')[0];
-    let down = document.querySelectorAll('.floor .down-btn')[1];
-    up.addEventListener('click', function() {
-        let targetFloor = up.getAttribute("floor");
-        elevatorRoute(targetFloor);
-    });
-    down.addEventListener('click', function() {
-        let targetFloor = down.getAttribute("floor");
-        elevatorRoute(targetFloor);
-    });
+    const floor = customCreateElement({ attributes: { class: "floor" }});
 
-    refreshTopFloor();
+    const btnContainer = customCreateElement({ attributes: { class: "btn-container" }});
+    const floorNumber = customCreateElement({ attributes: { class: "floor-number"}, text: `Floor ${maxFloors}`});
+
+    const btnUp = customCreateElement({ attributes: { class: "btn up-btn", floor: maxFloors }, text: "Up"});
+    const btnDown = customCreateElement({ attributes: { class: "btn down-btn", floor: maxFloors }, text: "Down"});
+    btnUp.addEventListener('click', () => socket.emit("called", btnUp.getAttribute("floor")));
+    btnDown.addEventListener('click', () => socket.emit("called", btnDown.getAttribute("floor")));
+
+    btnContainer.appendChild(btnUp);
+    btnContainer.appendChild(btnDown);
+    floor.appendChild(btnContainer);
+    floor.appendChild(floorNumber);
+
+    document.querySelector('.building').prepend(floor);
 }
 
-//Refreshes top floor
-function refreshTopFloor() {    
-    document.querySelector('.top .floor-number').innerHTML = "Floor " + maxFloors;
-    document.querySelector('.top .down-btn').setAttribute("floor", maxFloors);
-}
-
-
-//Remove floor when remove button is clicked
+// Remove floor
 let remove = document.querySelector('.remove-btn');
-remove.addEventListener('click', removeFloor);
-
+remove.addEventListener('click', () => socket.emit("removeFloor"));
 function removeFloor() {
-    let floors = document.querySelectorAll('.floor');
-
-    let topSecondFloor = floors[1];
-    topSecondFloor.remove();
-
     maxFloors--;
-    refreshTopFloor();
+
+    let floors = document.querySelectorAll('.floor');
+    floors[0].remove();
 }
 
+// Add lift
 let addLift = document.querySelector('#add-lift');
-addLift.addEventListener('click', addElevator);
+addLift.addEventListener('click', () => socket.emit('addLift'));
 
 function addElevator() {
     let width = window.innerWidth;
@@ -118,75 +152,31 @@ function addElevator() {
     refreshElevators();
 }
 
+// Remove Lift
 let removeLift = document.querySelector('#remove-lift');
-removeLift.addEventListener('click', removeElevator);
+removeLift.addEventListener('click', () => {
+    let elevators = document.querySelectorAll('.elevator');
+    let lastELevator = elevators[elevators.length - 1];
+
+    if(lastELevator.classList.contains('busy')) return alert("Last Elevator is currently operating. Unable to remove!");   
+    
+    socket.emit("removeLift");
+});
 
 function removeElevator() {
     if(numeberOfElevators == 1) return;
     
     let elevators = document.querySelectorAll('.elevator');
     let lastELevator = elevators[elevators.length - 1];
-
+    
     lastELevator.remove();
     numeberOfElevators--;
 }
 
-//Pushes the tasks into queue if all elevators are busy
-function elevatorRoute(targetFloor) {
-    let elevators = document.querySelectorAll(".elevator");
-
-    let elevator = null, minDistance = Infinity;
-    for(let i of elevators) {
-        if(!i.classList.contains('busy')) {
-            let distance = parseInt(i.getAttribute('on-floor')) - targetFloor;
-            if(distance < 0) distance *= -1;
-
-            if(distance == 0) {
-                floorChange(i, targetFloor);
-                return;
-            }
-            if(distance < minDistance) {
-                elevator = i;
-                minDistance = distance;
-            } 
-        }
-    }
-    if(elevator) return floorChange(elevator, targetFloor);
-    queue.push(targetFloor);
-    console.log(queue);
-}
-
-//Refresh listener for every up and down button
-function refreshListeners() {
-    //let elevator = document.querySelector(".elevator");
-    let up = document.querySelectorAll(".up-btn");
-    let down = document.querySelectorAll(".down-btn");
-
-    for(let i of up) {
-        i.addEventListener('click', function() {
-            let targetFloor = i.getAttribute("floor");
-            elevatorRoute(targetFloor);
-        });
-    }
-    
-    for(let i of down) {
-        i.addEventListener('click', function() {
-            let targetFloor = i.getAttribute("floor");
-            elevatorRoute(targetFloor);
-        });
-    }    
-}
-refreshListeners();
-
-
-//Displays and Refreshes floor number
-function refreshFloorNumber() {
-    let floorNumber = document.querySelectorAll('.floor .floor-number');
-    for(let i = 0; i <= maxFloors; i++) {
-        floorNumber[i].innerHTML = "Floor " + (maxFloors - i);
-    }
-}
-refreshFloorNumber();
+const btnUp = document.querySelector(".up-btn");
+const btnDown = document.querySelector(".down-btn")
+btnUp.addEventListener('click', () => socket.emit("called", btnUp.getAttribute("floor")));
+btnDown.addEventListener('click', () => socket.emit("called", btnDown.getAttribute("floor")));
 
 function refreshElevators() {
     let elevators = document.querySelectorAll('.elevator');
