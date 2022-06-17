@@ -13,6 +13,7 @@ socket.on("connect", () => {
 socket.on("sync", ({ lifts, floors}) => {
     setLifts(lifts);
     setFloors(floors);
+    document.querySelector('.loader-container').style.display = 'none';
 })
 
 socket.on("floorChange", floor => setFloors(floor));
