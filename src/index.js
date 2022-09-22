@@ -1,19 +1,24 @@
-import { Engine } from './js/Engine';
-import { Lift } from './js/Lift';
-import { Building } from './js/Building';
-import { Renderer } from './js/Renderer';
+import { Engine } from './components/Engine';
+import { Lift } from './components/Lift';
+import { Building } from './components/Building';
+import { Renderer } from './components/Renderer';
+import { Floor } from './components/Floor';
 
 console.clear();
 
 function initLifts(numberOfLifts = 3, numberOfFloors = 4) {
   const engine = new Engine();
   const lifts = [];
+  const floors = [];
   
   for(let i = 1; i <= numberOfLifts; i++) {
     lifts.push(new Lift(i));
   }
+  for(let i = 1; i <= numberOfFloors; i++) {
+    floors.push(new Floor());
+  }
 
-  const building = new Building(numberOfFloors, lifts, document.getElementById('building'));
+  const building = new Building(floors, lifts, document.getElementById('app'));
   const renderer = new Renderer(building);
 }
 

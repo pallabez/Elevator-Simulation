@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"src/js/Engine.js":[function(require,module,exports) {
+})({"src/components/Engine.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -142,7 +142,7 @@ exports.Engine = Engine;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.LIFT_STATE = void 0;
+exports.LIFT_STATE = exports.DIMENSIONS = void 0;
 var LIFT_STATE = {
   OPENING: 1,
   CLOSING: 2,
@@ -150,7 +150,11 @@ var LIFT_STATE = {
   LOCKED: 4
 };
 exports.LIFT_STATE = LIFT_STATE;
-},{}],"src/js/Lift.js":[function(require,module,exports) {
+var DIMENSIONS = {
+  FLOOR_HEIGHT_PX: 50
+};
+exports.DIMENSIONS = DIMENSIONS;
+},{}],"src/components/Lift.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -180,30 +184,7 @@ var Lift = /*#__PURE__*/_createClass(function Lift(position) {
 });
 
 exports.Lift = Lift;
-},{"../constant/constant":"src/constant/constant.js"}],"src/js/Building.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Building = void 0;
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Building = /*#__PURE__*/_createClass(function Building(floors, lifts, canvas) {
-  _classCallCheck(this, Building);
-
-  this.floors = floors;
-  this.canvas = canvas;
-  this.lifts = lifts;
-});
-
-exports.Building = Building;
-},{}],"src/utils/element.js":[function(require,module,exports) {
+},{"../constant/constant":"src/constant/constant.js"}],"src/utils/element.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -212,25 +193,111 @@ Object.defineProperty(exports, "__esModule", {
 exports.createElement = void 0;
 
 var createElement = function createElement() {
-  var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'div';
+  var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var el = document.createElement(type);
-  Object.keys(attributes).forEach(function (key) {
-    return el.setAttribute(key, attributes[key]);
-  });
-  return el;
+  var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'div';
+
+  try {
+    var el = document.createElement(type);
+    className.forEach(function (name) {
+      return el.classList.add(name);
+    });
+    Object.keys(attributes).forEach(function (key) {
+      return el.setAttribute(key, attributes[key]);
+    });
+    return el;
+  } catch (e) {
+    console.error('Error in creating element:: ', e);
+  }
 };
 
 exports.createElement = createElement;
-},{}],"src/js/Renderer.js":[function(require,module,exports) {
+},{}],"src/components/Floor.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Floor = void 0;
+
+var _constant = require("../constant/constant");
+
+var _element = require("../utils/element");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+var Floor = /*#__PURE__*/function () {
+  function Floor() {
+    _classCallCheck(this, Floor);
+
+    this.height = _constant.DIMENSIONS.FLOOR_HEIGHT_PX;
+    this.floorAdapter();
+  }
+
+  _createClass(Floor, [{
+    key: "floorAdapter",
+    value: function floorAdapter() {
+      this.floorElement = (0, _element.createElement)(['floor'], {
+        style: "height: ".concat(this.height, "px")
+      });
+    }
+  }]);
+
+  return Floor;
+}();
+
+exports.Floor = Floor;
+},{"../constant/constant":"src/constant/constant.js","../utils/element":"src/utils/element.js"}],"src/components/Building.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Building = void 0;
+
+var _element = require("../utils/element");
+
+var _Floor = require("./Floor");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+var Building = /*#__PURE__*/function () {
+  function Building(floors, lifts, canvas) {
+    _classCallCheck(this, Building);
+
+    this.floors = floors;
+    this.canvas = canvas;
+    this.lifts = lifts;
+    this.height = floors.length * _Floor.Floor.height;
+    this.buildingAdapter();
+  }
+
+  _createClass(Building, [{
+    key: "buildingAdapter",
+    value: function buildingAdapter() {
+      this.buildingElement = (0, _element.createElement)(['building']);
+    }
+  }]);
+
+  return Building;
+}();
+
+exports.Building = Building;
+},{"../utils/element":"src/utils/element.js","./Floor":"src/components/Floor.js"}],"src/components/Renderer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Renderer = void 0;
-
-var _element = require("../utils/element");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -243,13 +310,23 @@ var Renderer = /*#__PURE__*/function () {
     _classCallCheck(this, Renderer);
 
     this.building = building;
+    this.canvas = building.canvas;
+    this.lifts = building.lifts;
+    this.floors = building.floors;
     this.rerender();
   }
 
   _createClass(Renderer, [{
     key: "rerender",
     value: function rerender() {
-      console.log(this.building);
+      console.log(this.lifts, this.floors, this.canvas);
+      var buildingRef = this.building.buildingElement;
+      this.floors.forEach(function (floor) {
+        return buildingRef.append(floor.floorElement);
+      });
+      this.canvas.append(buildingRef); // requestAnimationFrame(() => {
+      //   this.rerender();
+      // })
     }
   }]);
 
@@ -257,16 +334,18 @@ var Renderer = /*#__PURE__*/function () {
 }();
 
 exports.Renderer = Renderer;
-},{"../utils/element":"src/utils/element.js"}],"src/index.js":[function(require,module,exports) {
+},{}],"src/index.js":[function(require,module,exports) {
 "use strict";
 
-var _Engine = require("./js/Engine");
+var _Engine = require("./components/Engine");
 
-var _Lift = require("./js/Lift");
+var _Lift = require("./components/Lift");
 
-var _Building = require("./js/Building");
+var _Building = require("./components/Building");
 
-var _Renderer = require("./js/Renderer");
+var _Renderer = require("./components/Renderer");
+
+var _Floor = require("./components/Floor");
 
 console.clear();
 
@@ -275,17 +354,22 @@ function initLifts() {
   var numberOfFloors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
   var engine = new _Engine.Engine();
   var lifts = [];
+  var floors = [];
 
   for (var i = 1; i <= numberOfLifts; i++) {
     lifts.push(new _Lift.Lift(i));
   }
 
-  var building = new _Building.Building(numberOfFloors, lifts, document.getElementById('building'));
+  for (var _i = 1; _i <= numberOfFloors; _i++) {
+    floors.push(new _Floor.Floor());
+  }
+
+  var building = new _Building.Building(floors, lifts, document.getElementById('app'));
   var renderer = new _Renderer.Renderer(building);
 }
 
 setTimeout(initLifts, 1000);
-},{"./js/Engine":"src/js/Engine.js","./js/Lift":"src/js/Lift.js","./js/Building":"src/js/Building.js","./js/Renderer":"src/js/Renderer.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./components/Engine":"src/components/Engine.js","./components/Lift":"src/components/Lift.js","./components/Building":"src/components/Building.js","./components/Renderer":"src/components/Renderer.js","./components/Floor":"src/components/Floor.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -313,7 +397,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38263" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38867" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
