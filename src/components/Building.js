@@ -8,10 +8,10 @@ export class Building {
     this.lifts = lifts;
     this.height = floors.length * Floor.height;
 
-    this.buildingAdapter();
+    this.buildingElement = this.buildingAdapter();
   }
 
   buildingAdapter() {
-    this.buildingElement = createElement(['building']);
+    return createElement(['building']);
   }
 }

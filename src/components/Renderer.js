@@ -5,18 +5,30 @@ export class Renderer {
     this.lifts = building.lifts;
     this.floors = building.floors;
 
-    this.rerender();
+    this.render();
   }
 
-  rerender() {
-    console.log(this.lifts, this.floors, this.canvas);
+  render() {
+    console.log(this.building);
 
     const buildingRef = this.building.buildingElement;
     this.floors.forEach(floor => buildingRef.append(floor.floorElement));
     
     this.canvas.append(buildingRef);
-    // requestAnimationFrame(() => {
-    //   this.rerender();
-    // })
+    
+    requestAnimationFrame(() => {
+      this.rerender();
+    })
+  };
+
+  rerender() {
+    const buildingRef = this.building.buildingElement;
+    this.lifts.forEach(lift => {
+      buildingRef.append(lift.liftElement);
+    });
+
+    requestAnimationFrame(() => {
+      this.rerender();
+    })
   }
 }

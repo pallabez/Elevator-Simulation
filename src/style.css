@@ -1,4 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+
 .building {
   width: 100%;
   border: 1px solid;
+  position: relative;
+}
+
+.floor {
+  border: 1px solid;
+}
+
+.lift {
+  position: absolute;
+  bottom: 0;
+  border: 1px solid;
+  height: 50px;
+  width: 30px;
 }

@@ -4,10 +4,11 @@ import { createElement } from "../utils/element";
 export class Floor {
   constructor() {
     this.height = DIMENSIONS.FLOOR_HEIGHT_PX;
-    this.floorAdapter();
+
+    this.floorElement = this.floorAdapter();
   }
 
   floorAdapter() {
-    this.floorElement = createElement(['floor'], { style: `height: ${this.height}px`})
+    return createElement(['floor'], { style: `height: ${this.height}px`})
   }
 }

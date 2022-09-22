@@ -144,47 +144,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.LIFT_STATE = exports.DIMENSIONS = void 0;
 var LIFT_STATE = {
-  OPENING: 1,
-  CLOSING: 2,
-  MOVING: 3,
-  LOCKED: 4
+  OPENING: 'OPENING',
+  CLOSING: 'CLOSING',
+  MOVING_UP: 'MOVING_UP',
+  MOVING_DOWN: 'MOVING_DOWN',
+  LOCKED: 'LOCKED'
 };
 exports.LIFT_STATE = LIFT_STATE;
 var DIMENSIONS = {
-  FLOOR_HEIGHT_PX: 50
+  FLOOR_HEIGHT_PX: 100
 };
 exports.DIMENSIONS = DIMENSIONS;
-},{}],"src/components/Lift.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Lift = void 0;
-
-var _constant = require("../constant/constant");
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Lift = /*#__PURE__*/_createClass(function Lift(position) {
-  var floor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  var state = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constant.LIFT_STATE.CLOSING;
-  var percentageDone = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 100;
-
-  _classCallCheck(this, Lift);
-
-  this.position = position;
-  this.floor = floor;
-  this.state = state;
-  this.percentageDone = percentageDone;
-});
-
-exports.Lift = Lift;
-},{"../constant/constant":"src/constant/constant.js"}],"src/utils/element.js":[function(require,module,exports) {
+},{}],"src/utils/element.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -212,7 +183,72 @@ var createElement = function createElement() {
 };
 
 exports.createElement = createElement;
-},{}],"src/components/Floor.js":[function(require,module,exports) {
+},{}],"src/components/Lift.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Lift = void 0;
+
+var _constant = require("../constant/constant");
+
+var _element = require("../utils/element");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+var Lift = /*#__PURE__*/function () {
+  function Lift(position) {
+    var floor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var state = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constant.LIFT_STATE.CLOSING;
+    var fractionDone = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
+
+    _classCallCheck(this, Lift);
+
+    this.position = position;
+    this.floor = floor;
+    this.state = state;
+    this.fractionDone = fractionDone;
+    this.liftElement = this.liftAdapter();
+  }
+
+  _createClass(Lift, [{
+    key: "liftAdapter",
+    value: function liftAdapter() {
+      return createElementLift(this.position, 60, this.floor, this.fractionDone, this.state);
+    }
+  }]);
+
+  return Lift;
+}();
+
+exports.Lift = Lift;
+
+var createElementLift = function createElementLift(position, gap, floor, fractionDone, state) {
+  var left = position * gap;
+  var translateY = floor * _constant.DIMENSIONS.FLOOR_HEIGHT_PX;
+
+  switch (state) {
+    case _constant.LIFT_STATE.MOVING_UP:
+      translateY = translateY + _constant.DIMENSIONS.FLOOR_HEIGHT_PX * fractionDone;
+      break;
+
+    case _constant.LIFT_STATE.MOVING_DOWN:
+      translateY = translateY - _constant.DIMENSIONS.FLOOR_HEIGHT_PX * fractionDone;
+      break;
+  }
+
+  var styleLeft = "left: ".concat(left, "px;");
+  var styleTranslateY = "transform: translateY(-".concat(translateY, "px) translateX(-100%)");
+  return (0, _element.createElement)(['lift'], {
+    style: "".concat(styleLeft, " ").concat(styleTranslateY)
+  });
+};
+},{"../constant/constant":"src/constant/constant.js","../utils/element":"src/utils/element.js"}],"src/components/Floor.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -235,13 +271,13 @@ var Floor = /*#__PURE__*/function () {
     _classCallCheck(this, Floor);
 
     this.height = _constant.DIMENSIONS.FLOOR_HEIGHT_PX;
-    this.floorAdapter();
+    this.floorElement = this.floorAdapter();
   }
 
   _createClass(Floor, [{
     key: "floorAdapter",
     value: function floorAdapter() {
-      this.floorElement = (0, _element.createElement)(['floor'], {
+      return (0, _element.createElement)(['floor'], {
         style: "height: ".concat(this.height, "px")
       });
     }
@@ -277,13 +313,13 @@ var Building = /*#__PURE__*/function () {
     this.canvas = canvas;
     this.lifts = lifts;
     this.height = floors.length * _Floor.Floor.height;
-    this.buildingAdapter();
+    this.buildingElement = this.buildingAdapter();
   }
 
   _createClass(Building, [{
     key: "buildingAdapter",
     value: function buildingAdapter() {
-      this.buildingElement = (0, _element.createElement)(['building']);
+      return (0, _element.createElement)(['building']);
     }
   }]);
 
@@ -313,20 +349,36 @@ var Renderer = /*#__PURE__*/function () {
     this.canvas = building.canvas;
     this.lifts = building.lifts;
     this.floors = building.floors;
-    this.rerender();
+    this.render();
   }
 
   _createClass(Renderer, [{
-    key: "rerender",
-    value: function rerender() {
-      console.log(this.lifts, this.floors, this.canvas);
+    key: "render",
+    value: function render() {
+      var _this = this;
+
+      console.log(this.building);
       var buildingRef = this.building.buildingElement;
       this.floors.forEach(function (floor) {
         return buildingRef.append(floor.floorElement);
       });
-      this.canvas.append(buildingRef); // requestAnimationFrame(() => {
-      //   this.rerender();
-      // })
+      this.canvas.append(buildingRef);
+      requestAnimationFrame(function () {
+        _this.rerender();
+      });
+    }
+  }, {
+    key: "rerender",
+    value: function rerender() {
+      var _this2 = this;
+
+      var buildingRef = this.building.buildingElement;
+      this.lifts.forEach(function (lift) {
+        buildingRef.append(lift.liftElement);
+      });
+      requestAnimationFrame(function () {
+        _this2.rerender();
+      });
     }
   }]);
 
@@ -397,7 +449,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38867" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40939" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
