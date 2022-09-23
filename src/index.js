@@ -7,7 +7,6 @@ import { Floor } from './components/Floor';
 console.clear();
 
 function initLifts(numberOfLifts = 3, numberOfFloors = 4) {
-  const engine = new Engine();
   const lifts = [];
   const floors = [];
   
@@ -17,9 +16,13 @@ function initLifts(numberOfLifts = 3, numberOfFloors = 4) {
   for(let i = 1; i <= numberOfFloors; i++) {
     floors.push(new Floor());
   }
-
+  
   const building = new Building(floors, lifts, document.getElementById('app'));
+  const engine = new Engine(building);
   const renderer = new Renderer(building);
-}
+
+  setTimeout(() => engine.requestLiftToFloor(2), 2000);
+  setTimeout(() => engine.requestLiftToFloor(3), 3000);
+} 
 
 setTimeout(initLifts, 1000);

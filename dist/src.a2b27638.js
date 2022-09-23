@@ -117,26 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"src/components/Engine.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Engine = void 0;
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Engine = /*#__PURE__*/_createClass(function Engine() {
-  _classCallCheck(this, Engine);
-});
-
-exports.Engine = Engine;
-},{}],"src/constant/constant.js":[function(require,module,exports) {
+})({"src/constant/constant.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -146,16 +127,62 @@ exports.LIFT_STATE = exports.DIMENSIONS = void 0;
 var LIFT_STATE = {
   OPENING: 'OPENING',
   CLOSING: 'CLOSING',
-  MOVING_UP: 'MOVING_UP',
-  MOVING_DOWN: 'MOVING_DOWN',
+  CLOSED: 'CLOSED',
+  MOVING: 'MOVING',
   LOCKED: 'LOCKED'
 };
 exports.LIFT_STATE = LIFT_STATE;
 var DIMENSIONS = {
-  FLOOR_HEIGHT_PX: 100
+  FLOOR_HEIGHT_PX: 100,
+  LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS: 1000,
+  LIFT_GAP: 60
 };
 exports.DIMENSIONS = DIMENSIONS;
-},{}],"src/utils/element.js":[function(require,module,exports) {
+},{}],"src/components/Engine.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Engine = void 0;
+
+var _constant = require("../constant/constant");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+var Engine = /*#__PURE__*/function () {
+  function Engine(building) {
+    _classCallCheck(this, Engine);
+
+    this.building = building;
+    this.lifts = building.lifts;
+    this.floors = building.floors;
+  }
+
+  _createClass(Engine, [{
+    key: "requestLiftToFloor",
+    value: function requestLiftToFloor(floor) {
+      var lift = this.findOptimalLiftForFloor(floor);
+      lift.moveToFloor(floor);
+    }
+  }, {
+    key: "findOptimalLiftForFloor",
+    value: function findOptimalLiftForFloor(floor) {
+      return this.lifts.find(function (lift) {
+        return lift.state === _constant.LIFT_STATE.CLOSED;
+      });
+    }
+  }]);
+
+  return Engine;
+}();
+
+exports.Engine = Engine;
+},{"../constant/constant":"src/constant/constant.js"}],"src/utils/element.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -204,22 +231,49 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var Lift = /*#__PURE__*/function () {
   function Lift(position) {
     var floor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-    var state = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constant.LIFT_STATE.CLOSING;
-    var fractionDone = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
+    var state = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _constant.LIFT_STATE.CLOSED;
 
     _classCallCheck(this, Lift);
 
     this.position = position;
     this.floor = floor;
+    this.targetFloor = floor;
     this.state = state;
-    this.fractionDone = fractionDone;
-    this.liftElement = this.liftAdapter();
+    this.liftAdapter();
   }
 
   _createClass(Lift, [{
     key: "liftAdapter",
     value: function liftAdapter() {
-      return createElementLift(this.position, 60, this.floor, this.fractionDone, this.state);
+      if (this.liftElement) this.liftElement.remove();
+      this.updatePosition();
+      this.liftElement = createElementLift(this.position, _constant.DIMENSIONS.LIFT_GAP, this.floor, this.state);
+      return this.liftElement;
+    }
+  }, {
+    key: "moveToFloor",
+    value: function moveToFloor(floor) {
+      this.startTime = Date.now();
+      this.targetFloor = floor;
+      this.startFloor = this.floor;
+      this.state = _constant.LIFT_STATE.MOVING;
+    }
+  }, {
+    key: "updatePosition",
+    value: function updatePosition() {
+      var currentTime = Date.now();
+      var endTime = this.targetFloor * _constant.DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS + this.startTime;
+
+      if (currentTime > endTime) {
+        this.state = _constant.LIFT_STATE.CLOSED;
+        this.floor = this.targetFloor;
+        return;
+      }
+
+      if (this.targetFloor === this.floor) return;
+      var duration = currentTime - this.startTime;
+      var floorCovered = duration / _constant.DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS;
+      this.floor = this.targetFloor > this.floor ? this.startFloor + floorCovered : this.floor - floorCovered;
     }
   }]);
 
@@ -228,20 +282,9 @@ var Lift = /*#__PURE__*/function () {
 
 exports.Lift = Lift;
 
-var createElementLift = function createElementLift(position, gap, floor, fractionDone, state) {
+var createElementLift = function createElementLift(position, gap, floor, state) {
   var left = position * gap;
   var translateY = floor * _constant.DIMENSIONS.FLOOR_HEIGHT_PX;
-
-  switch (state) {
-    case _constant.LIFT_STATE.MOVING_UP:
-      translateY = translateY + _constant.DIMENSIONS.FLOOR_HEIGHT_PX * fractionDone;
-      break;
-
-    case _constant.LIFT_STATE.MOVING_DOWN:
-      translateY = translateY - _constant.DIMENSIONS.FLOOR_HEIGHT_PX * fractionDone;
-      break;
-  }
-
   var styleLeft = "left: ".concat(left, "px;");
   var styleTranslateY = "transform: translateY(-".concat(translateY, "px) translateX(-100%)");
   return (0, _element.createElement)(['lift'], {
@@ -295,6 +338,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Building = void 0;
 
+var _constant = require("../constant/constant");
+
 var _element = require("../utils/element");
 
 var _Floor = require("./Floor");
@@ -312,7 +357,7 @@ var Building = /*#__PURE__*/function () {
     this.floors = floors;
     this.canvas = canvas;
     this.lifts = lifts;
-    this.height = floors.length * _Floor.Floor.height;
+    this.height = floors.length * _constant.DIMENSIONS.FLOOR_HEIGHT_PX;
     this.buildingElement = this.buildingAdapter();
   }
 
@@ -327,7 +372,7 @@ var Building = /*#__PURE__*/function () {
 }();
 
 exports.Building = Building;
-},{"../utils/element":"src/utils/element.js","./Floor":"src/components/Floor.js"}],"src/components/Renderer.js":[function(require,module,exports) {
+},{"../constant/constant":"src/constant/constant.js","../utils/element":"src/utils/element.js","./Floor":"src/components/Floor.js"}],"src/components/Renderer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -374,7 +419,7 @@ var Renderer = /*#__PURE__*/function () {
 
       var buildingRef = this.building.buildingElement;
       this.lifts.forEach(function (lift) {
-        buildingRef.append(lift.liftElement);
+        buildingRef.append(lift.liftAdapter());
       });
       requestAnimationFrame(function () {
         _this2.rerender();
@@ -404,7 +449,6 @@ console.clear();
 function initLifts() {
   var numberOfLifts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3;
   var numberOfFloors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
-  var engine = new _Engine.Engine();
   var lifts = [];
   var floors = [];
 
@@ -417,7 +461,14 @@ function initLifts() {
   }
 
   var building = new _Building.Building(floors, lifts, document.getElementById('app'));
+  var engine = new _Engine.Engine(building);
   var renderer = new _Renderer.Renderer(building);
+  setTimeout(function () {
+    return engine.requestLiftToFloor(2);
+  }, 2000);
+  setTimeout(function () {
+    return engine.requestLiftToFloor(3);
+  }, 3000);
 }
 
 setTimeout(initLifts, 1000);
@@ -449,7 +500,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40939" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40771" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

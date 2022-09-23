@@ -24,7 +24,7 @@ export class Renderer {
   rerender() {
     const buildingRef = this.building.buildingElement;
     this.lifts.forEach(lift => {
-      buildingRef.append(lift.liftElement);
+      buildingRef.append(lift.liftAdapter());
     });
 
     requestAnimationFrame(() => {
