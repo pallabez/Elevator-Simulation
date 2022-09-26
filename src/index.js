@@ -6,7 +6,7 @@ import { Floor } from './components/Floor';
 
 console.clear();
 
-function initLifts(numberOfLifts = 3, numberOfFloors = 4) {
+function initLifts(numberOfLifts = 2, numberOfFloors = 4) {
   const lifts = [];
   const floors = [];
   
@@ -21,8 +21,10 @@ function initLifts(numberOfLifts = 3, numberOfFloors = 4) {
   const engine = new Engine(building);
   const renderer = new Renderer(building);
 
-  setTimeout(() => engine.requestLiftToFloor(2), 2000);
-  setTimeout(() => engine.requestLiftToFloor(3), 3000);
+  setTimeout(() => engine.requestLiftToFloor(2), 1000);
+  setTimeout(() => engine.requestLiftToFloor(1), 1500);
+  setTimeout(() => engine.requestLiftToFloor(0), 4000);
+  setTimeout(() => engine.requestLiftToFloor(0), 4002);
 } 
 
 setTimeout(initLifts, 1000);

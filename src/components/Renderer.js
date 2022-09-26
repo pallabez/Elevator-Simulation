@@ -9,8 +9,6 @@ export class Renderer {
   }
 
   render() {
-    console.log(this.building);
-
     const buildingRef = this.building.buildingElement;
     this.floors.forEach(floor => buildingRef.append(floor.floorElement));
     

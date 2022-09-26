@@ -6,19 +6,25 @@ export class Lift {
     this.floor = floor;
     this.targetFloor = floor;
     this.state = state;
+    this.queue = [];
 
     this.liftAdapter();
   }
 
   liftAdapter() {
     if(this.liftElement) this.liftElement.remove();
-    
+    if(this.liftElement && this.state === LIFT_STATE.CLOSED) return this.liftElement;
+
     this.updatePosition();
     this.liftElement = createElementLift(this.position, DIMENSIONS.LIFT_GAP, this.floor, this.state);
     return this.liftElement;
   }
   
   moveToFloor(floor) {
+    if(!LIFT_STATE.CLOSED) {
+      this.queue.push(floor);
+      return;
+    };
     this.startTime = Date.now();
     this.targetFloor = floor;
     this.startFloor = this.floor;
@@ -27,19 +33,23 @@ export class Lift {
 
   updatePosition() {
     const currentTime = Date.now();
-    const endTime = this.targetFloor * DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS + this.startTime;
+    const distance = Math.abs(this.targetFloor - this.startFloor);
+    const endTime = distance * DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS + this.startTime;
+
     if (currentTime > endTime) {
       this.state = LIFT_STATE.CLOSED;
       this.floor = this.targetFloor;
+      if(this.queue.length) this.moveToFloor(this.queue.shift())
       return;
     }
-
+    
     if(this.targetFloor === this.floor) return;
 
-    const duration = currentTime - this.startTime;
-    const floorCovered = duration / DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS;
-    
-    this.floor = this.targetFloor > this.floor ? this.startFloor + floorCovered : this.floor - floorCovered;
+    const durationCovered = currentTime - this.startTime;
+    const floorCovered = durationCovered / DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS;
+    this.floor = this.targetFloor > this.floor 
+      ? this.startFloor + floorCovered 
+      : this.startFloor - floorCovered;
   }
 }
 
