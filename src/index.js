@@ -6,25 +6,24 @@ import { Floor } from './components/Floor';
 
 console.clear();
 
-function initLifts(numberOfLifts = 2, numberOfFloors = 4) {
+function initLifts(numberOfLifts = 1, numberOfFloors = 4) {
   const lifts = [];
   const floors = [];
   
+  const engine = new Engine();
   for(let i = 1; i <= numberOfLifts; i++) {
     lifts.push(new Lift(i));
   }
-  for(let i = 1; i <= numberOfFloors; i++) {
-    floors.push(new Floor());
+  for(let i = 0; i < numberOfFloors; i++) {
+    floors.push(new Floor(i, engine));
   }
   
   const building = new Building(floors, lifts, document.getElementById('app'));
-  const engine = new Engine(building);
+  engine.setBuilding(building);
   const renderer = new Renderer(building);
 
-  setTimeout(() => engine.requestLiftToFloor(2), 1000);
-  setTimeout(() => engine.requestLiftToFloor(1), 1500);
-  setTimeout(() => engine.requestLiftToFloor(0), 4000);
-  setTimeout(() => engine.requestLiftToFloor(0), 4002);
+  // setTimeout(() => engine.requestLiftToFloor(0), 4000);
+  // setTimeout(() => engine.requestLiftToFloor(3), 4000);
 } 
 
 setTimeout(initLifts, 1000);

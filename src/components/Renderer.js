@@ -10,8 +10,11 @@ export class Renderer {
 
   render() {
     const buildingRef = this.building.buildingElement;
-    this.floors.forEach(floor => buildingRef.append(floor.floorElement));
-    
+    this.floors.forEach(floor => buildingRef.prepend(floor.floorElement));
+    this.lifts.forEach(lift => {
+      buildingRef.append(lift.renderLift());
+    });
+
     this.canvas.append(buildingRef);
     
     requestAnimationFrame(() => {
@@ -20,9 +23,8 @@ export class Renderer {
   };
 
   rerender() {
-    const buildingRef = this.building.buildingElement;
     this.lifts.forEach(lift => {
-      buildingRef.append(lift.liftAdapter());
+      lift.renderLift();
     });
 
     requestAnimationFrame(() => {

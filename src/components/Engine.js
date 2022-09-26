@@ -1,11 +1,10 @@
 import { DIMENSIONS, LIFT_STATE } from "../constant/constant";
 
 export class Engine {
-  constructor(building) {
+  setBuilding(building) {
     this.building = building;
     this.lifts = building.lifts;
     this.floors = building.floors;
-    this.queue = [];
   }
 
   requestLiftToFloor(floor) {

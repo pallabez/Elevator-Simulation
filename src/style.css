@@ -2,14 +2,18 @@
   box-sizing: border-box;
 }
 
+#app {
+  padding-left: 20px;
+}
+
 .building {
   width: 100%;
-  border: 1px solid;
   position: relative;
 }
 
 .floor {
   border: 1px solid;
+  position: relative;
 }
 
 .lift {
@@ -18,4 +22,20 @@
   border: 1px solid;
   height: 50px;
   width: 30px;
+}
+
+.floor__button {
+  position: absolute;
+  padding: 10px;
+  transform: translateX(calc(-100% - 5px));
+}
+
+.floor__button--up {
+  background-color: greenyellow;
+  top: 10px;
+}
+
+.floor__button--down {
+  background-color: red;
+  bottom: 10px;
 }

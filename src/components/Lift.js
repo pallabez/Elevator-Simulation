@@ -7,21 +7,24 @@ export class Lift {
     this.targetFloor = floor;
     this.state = state;
     this.queue = [];
-
-    this.liftAdapter();
+    this.liftElement = null;
   }
 
-  liftAdapter() {
-    if(this.liftElement) this.liftElement.remove();
-    if(this.liftElement && this.state === LIFT_STATE.CLOSED) return this.liftElement;
+  renderLift() {
+    if(!this.isLiftCreated()) {
+      this.createLift();
+      return this.liftElement;
+    };
 
+    if(this.isLiftIdle()) return this.liftElement;
+    
     this.updatePosition();
-    this.liftElement = createElementLift(this.position, DIMENSIONS.LIFT_GAP, this.floor, this.state);
+    this.updateLiftRender();
     return this.liftElement;
   }
   
   moveToFloor(floor) {
-    if(!LIFT_STATE.CLOSED) {
+    if(!this.isLiftIdle()) {
       this.queue.push(floor);
       return;
     };
@@ -30,12 +33,12 @@ export class Lift {
     this.startFloor = this.floor;
     this.state = LIFT_STATE.MOVING;
   }
-
+  
   updatePosition() {
     const currentTime = Date.now();
     const distance = Math.abs(this.targetFloor - this.startFloor);
     const endTime = distance * DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS + this.startTime;
-
+    
     if (currentTime > endTime) {
       this.state = LIFT_STATE.CLOSED;
       this.floor = this.targetFloor;
@@ -44,22 +47,42 @@ export class Lift {
     }
     
     if(this.targetFloor === this.floor) return;
-
+    
     const durationCovered = currentTime - this.startTime;
     const floorCovered = durationCovered / DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS;
     this.floor = this.targetFloor > this.floor 
-      ? this.startFloor + floorCovered 
-      : this.startFloor - floorCovered;
+    ? this.startFloor + floorCovered 
+    : this.startFloor - floorCovered;
   }
-}
 
-const createElementLift = (position, gap, floor, state) => {
-  const left = position * gap;
-  const translateY = floor * DIMENSIONS.FLOOR_HEIGHT_PX;
+  isLiftCreated() {
+    return Boolean(this.liftElement);
+  }
 
+  isLiftIdle() {
+    return this.state === LIFT_STATE.CLOSED;
+  }
 
-  const styleLeft = `left: ${left}px;`
-  const styleTranslateY = `transform: translateY(-${translateY}px) translateX(-100%)`
+  createLift() {
+    const left = this.position * DIMENSIONS.LIFT_GAP;
+    const translateY = this.floor * DIMENSIONS.FLOOR_HEIGHT_PX;
 
-  return createElement(['lift'], { style: `${styleLeft} ${styleTranslateY}`});
+    const styleLeft = `${left}px`
+    const styleTranslate = `translateY(-${translateY}px) translateX(-100%)`
+  
+    const el = createElement(['lift']);
+    el.style.left = styleLeft;
+    el.style.transform = styleTranslate;
+    
+    this.liftElement = el;
+  }
+
+  updateLiftRender() {
+    const liftEl = this.liftElement;
+    const translateY = this.floor * DIMENSIONS.FLOOR_HEIGHT_PX;
+    
+    const styleTranslate = `translateY(-${translateY}px) translateX(-100%)`
+    
+    liftEl.style.transform = styleTranslate; 
+  }
 }
