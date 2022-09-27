@@ -1,8 +1,16 @@
 import { DIMENSIONS } from "../constant/constant";
 import { createElement } from "../utils/element";
+import { Floor } from "./Floor";
+import { Lift } from "./Lift";
 
 export class Building {
-  constructor(floors, lifts, canvas) {
+  lifts: Array<Lift>;
+  canvas: HTMLElement;
+  floors: Array<Floor>;
+  height: number;
+  buildingElement: HTMLElement;
+
+  constructor(floors: Array<Floor>, lifts: Array<Lift>, canvas: HTMLElement) {
     this.floors = floors;
     this.canvas = canvas;
     this.lifts = lifts;

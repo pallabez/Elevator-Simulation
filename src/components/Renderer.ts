@@ -1,5 +1,14 @@
+import { Building } from "./Building";
+import { Floor } from "./Floor";
+import { Lift } from "./Lift";
+
 export class Renderer {
-  constructor(building) {
+  building: Building;
+  canvas: HTMLElement;
+  lifts: Array<Lift>
+  floors: Array<Floor>
+
+  constructor(building: Building) {
     this.building = building;
     this.canvas = building.canvas;
     this.lifts = building.lifts;

@@ -1,8 +1,8 @@
 export const createElement = (
-  className = [],
-  attributes = {},
-  type = 'div',
-) => {
+  className: Array<string> = [],
+  attributes: { [value: string]: string } = {},
+  type: string = 'div',
+): HTMLElement => {
   try {
     const el = document.createElement(type);
     className.forEach(name => el.classList.add(name));

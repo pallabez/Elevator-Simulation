@@ -1,7 +1,16 @@
 import { DIMENSIONS, LIFT_STATE } from "../constant/constant";
 import { createElement } from "../utils/element";
 export class Lift {
-  constructor(position, floor = 0, state = LIFT_STATE.CLOSED) {
+  position: number;
+  floor: number;
+  targetFloor: number | null;
+  state: string;
+  queue: Array<number>;
+  liftElement: HTMLElement;
+  startTime: Date;
+  startFloor: number;
+
+  constructor(position: number, floor: number = 0, state: string = LIFT_STATE.CLOSED) {
     this.position = position;
     this.floor = floor;
     this.targetFloor = floor;
@@ -23,12 +32,12 @@ export class Lift {
     return this.liftElement;
   }
   
-  moveToFloor(floor) {
+  moveToFloor(floor: number) {
     if(!this.isLiftIdle()) {
       this.queue.push(floor);
       return;
     };
-    this.startTime = Date.now();
+    this.startTime = new Date();
     this.targetFloor = floor;
     this.startFloor = this.floor;
     this.state = LIFT_STATE.MOVING;
@@ -37,7 +46,7 @@ export class Lift {
   updatePosition() {
     const currentTime = Date.now();
     const distance = Math.abs(this.targetFloor - this.startFloor);
-    const endTime = distance * DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS + this.startTime;
+    const endTime = distance * DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS + this.startTime.getTime();
     
     if (currentTime > endTime) {
       this.state = LIFT_STATE.CLOSED;
@@ -48,22 +57,22 @@ export class Lift {
     
     if(this.targetFloor === this.floor) return;
     
-    const durationCovered = currentTime - this.startTime;
+    const durationCovered = currentTime - this.startTime.getTime();
     const floorCovered = durationCovered / DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_SECONDS;
     this.floor = this.targetFloor > this.floor 
     ? this.startFloor + floorCovered 
     : this.startFloor - floorCovered;
   }
 
-  isLiftCreated() {
+  isLiftCreated(): Boolean {
     return Boolean(this.liftElement);
   }
 
-  isLiftIdle() {
+  isLiftIdle(): Boolean {
     return this.state === LIFT_STATE.CLOSED;
   }
 
-  createLift() {
+  createLift(): void {
     const left = this.position * DIMENSIONS.LIFT_GAP;
     const translateY = this.floor * DIMENSIONS.FLOOR_HEIGHT_PX;
 
@@ -77,7 +86,7 @@ export class Lift {
     this.liftElement = el;
   }
 
-  updateLiftRender() {
+  updateLiftRender(): void {
     const liftEl = this.liftElement;
     const translateY = this.floor * DIMENSIONS.FLOOR_HEIGHT_PX;
     

@@ -2,7 +2,13 @@ import { DIMENSIONS } from "../constant/constant";
 import { createElement } from "../utils/element";
 
 export class Floor {
-  constructor(floorNumber) {
+  height: number;
+  floorNumber: number;
+  buttonUpEl: HTMLElement;
+  buttonDownEl: HTMLElement;
+  floorElement: HTMLElement;
+
+  constructor(floorNumber: number) {
     this.height = DIMENSIONS.FLOOR_HEIGHT_PX;
     this.floorNumber = floorNumber;
     this.buttonUpEl = null;
@@ -10,12 +16,12 @@ export class Floor {
     this.floorElement = this.floorAdapter();
   }
 
-  setButtonListener(callback) {
+  setButtonListener(callback: () => void): void {
     this.buttonUpEl.addEventListener('click', callback);
     this.buttonDownEl.addEventListener('click', callback);
   }
 
-  floorAdapter() {
+  floorAdapter(): HTMLElement {
     const el = createElement(['floor']);
     el.style.height = `${this.height}px`;
 
