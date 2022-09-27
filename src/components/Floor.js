@@ -2,16 +2,17 @@ import { DIMENSIONS } from "../constant/constant";
 import { createElement } from "../utils/element";
 
 export class Floor {
-  constructor(floorNumber, engine) {
-    this.engine = engine;
+  constructor(floorNumber) {
     this.height = DIMENSIONS.FLOOR_HEIGHT_PX;
     this.floorNumber = floorNumber;
-
+    this.buttonUpEl = null;
+    this.buttonDownEl = null;
     this.floorElement = this.floorAdapter();
   }
 
-  setEngine(engine) {
-    this.engine = engine;
+  setButtonListener(callback) {
+    this.buttonUpEl.addEventListener('click', callback);
+    this.buttonDownEl.addEventListener('click', callback);
   }
 
   floorAdapter() {
@@ -21,9 +22,9 @@ export class Floor {
     const buttonUpEl = createElement(['floor__button', 'floor__button--up']);
     const buttonDownEl = createElement(['floor__button', 'floor__button--down']);
 
-    buttonUpEl.addEventListener('click', () => this.engine.requestLiftToFloor(this.floorNumber));
-    buttonDownEl.addEventListener('click', () => this.engine.requestLiftToFloor(this.floorNumber));
-    
+    this.buttonUpEl = buttonUpEl;
+    this.buttonDownEl = buttonDownEl;
+
     el.append(buttonUpEl, buttonDownEl);
 
     return el;

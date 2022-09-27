@@ -1,7 +1,7 @@
 import { DIMENSIONS, LIFT_STATE } from "../constant/constant";
 
 export class Engine {
-  setBuilding(building) {
+  constructor(building) {
     this.building = building;
     this.lifts = building.lifts;
     this.floors = building.floors;

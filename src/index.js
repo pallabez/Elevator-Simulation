@@ -10,20 +10,21 @@ function initLifts(numberOfLifts = 1, numberOfFloors = 4) {
   const lifts = [];
   const floors = [];
   
-  const engine = new Engine();
   for(let i = 1; i <= numberOfLifts; i++) {
     lifts.push(new Lift(i));
   }
   for(let i = 0; i < numberOfFloors; i++) {
-    floors.push(new Floor(i, engine));
+    floors.push(new Floor(i));
   }
   
   const building = new Building(floors, lifts, document.getElementById('app'));
-  engine.setBuilding(building);
-  const renderer = new Renderer(building);
+  const engine = new Engine(building);
 
-  // setTimeout(() => engine.requestLiftToFloor(0), 4000);
-  // setTimeout(() => engine.requestLiftToFloor(3), 4000);
+  for(const floor of floors) {
+    floor.setButtonListener(() => engine.requestLiftToFloor(floor.floorNumber));
+  }
+
+  const renderer = new Renderer(building);
 } 
 
 setTimeout(initLifts, 1000);
