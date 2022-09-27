@@ -1,6 +1,5 @@
 import { DIMENSIONS } from "../constant/constant";
 import { createElement } from "../utils/element";
-import { Floor } from "./Floor";
 
 export class Building {
   constructor(floors, lifts, canvas) {
