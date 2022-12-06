@@ -6,7 +6,7 @@ import { Floor } from './components/Floor';
 
 console.clear();
 
-function initLifts(numberOfLifts = 1, numberOfFloors = 4) {
+function initLifts(numberOfLifts = 2, numberOfFloors = 4) {
   const lifts = [];
   const floors = [];
   

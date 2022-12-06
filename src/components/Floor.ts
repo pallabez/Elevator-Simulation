@@ -1,11 +1,11 @@
 import { DIMENSIONS } from "../constant/constant";
-import { createElement } from "../utils/element";
+import { createElement, createElementButton } from "../utils/element";
 
 export class Floor {
   height: number;
   floorNumber: number;
-  buttonUpEl: HTMLElement;
-  buttonDownEl: HTMLElement;
+  buttonUpEl: HTMLButtonElement;
+  buttonDownEl: HTMLButtonElement;
   floorElement: HTMLElement;
 
   constructor(floorNumber: number) {
@@ -25,8 +25,8 @@ export class Floor {
     const el = createElement(['floor']);
     el.style.height = `${this.height}px`;
 
-    const buttonUpEl = createElement(['floor__button', 'floor__button--up']);
-    const buttonDownEl = createElement(['floor__button', 'floor__button--down']);
+    const buttonUpEl = createElementButton(['floor__button', 'floor__button--up']);
+    const buttonDownEl = createElementButton(['floor__button', 'floor__button--down']);
 
     this.buttonUpEl = buttonUpEl;
     this.buttonDownEl = buttonDownEl;
