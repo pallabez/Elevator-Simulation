@@ -1,5 +1,6 @@
-import { DIMENSIONS } from "../constant/constant";
-import { createElement } from "../utils/element";
+import { EventEmitter } from "events";
+import { DIMENSIONS, FLOOR_EVENT } from "../constant/constant";
+import { createElement, createElementButton } from "../utils/element";
 import { Building } from "./Building";
 import { Floor } from "./Floor";
 import { Lift } from "./Lift";
@@ -9,28 +10,44 @@ interface LiftRef {
   lift: Lift;
 }
 
+interface FloorRef {
+  floorEl: HTMLElement;
+  floorUpEl: HTMLElement;
+  floorDownEl: HTMLElement;
+  floor: Floor;
+}
+
 export class Renderer {
   building: Building;
   canvas: HTMLElement;
-  lifts: Array<LiftRef>
-  floors: Array<Floor>
+  lifts: Array<LiftRef>;
+  floors: Array<FloorRef>;
+  eventEmitter: EventEmitter;
 
-  constructor(building: Building) {
+  constructor(building: Building, eventEmitter: EventEmitter) {
     this.building = building;
     this.canvas = building.canvas;
     this.lifts = liftsAdapter(building.lifts);
-    this.floors = building.floors;
-
+    this.floors = floorsAdapter(building.floors);
+    this.eventEmitter = eventEmitter;
     this.initialize();
   }
 
   private initialize() {
     const buildingRef = this.building.buildingElement;
 
-    this.floors.forEach(floor => buildingRef.prepend(floor.floorElement));
+    this.floors.forEach(floorRef => {
+      floorRef.floorUpEl.addEventListener('click', () => {
+        this.eventEmitter.emit(FLOOR_EVENT.FLOOR_BUTTON_UP_CLICK, floorRef.floor.floorNumber);
+      });
+      floorRef.floorDownEl.addEventListener('click', () => {
+        this.eventEmitter.emit(FLOOR_EVENT.FLOOR_BUTTON_DOWN_CLICK, floorRef.floor.floorNumber);
+      });
+      buildingRef.prepend(floorRef.floorEl);
+    });
     this.lifts.forEach(liftRef => buildingRef.append(liftRef.liftEl));
     this.canvas.append(buildingRef);
-    
+
     requestAnimationFrame(() => this.rerender());
   };
 
@@ -40,7 +57,25 @@ export class Renderer {
   }
 }
 
-function updateLiftElement(liftRef: LiftRef): void {
+function floorsAdapter(floors: Array<Floor>): Array<FloorRef> {
+  return floors.map(floor => {
+    return {
+      ...renderFloor(floor),
+      floor,
+    }
+  })
+}
+
+function liftsAdapter(lifts: Array<Lift>): Array<LiftRef> {
+  return lifts.map(lift => {
+    return {
+      liftEl: renderLift(lift),
+      lift,
+    }
+  })
+}
+
+function updateLiftElement(liftRef: LiftRef) {
   const { lift, liftEl } = liftRef;
   if (lift.isLiftIdle()) return;
 
@@ -52,13 +87,20 @@ function updateLiftElement(liftRef: LiftRef): void {
   liftEl.style.transform = styleTranslate;
 }
 
-function liftsAdapter(lifts: Array<Lift>): Array<LiftRef> {
-  return lifts.map(lift => {
-    return {
-      liftEl: renderLift(lift),
-      lift,
-    }
-  })
+function renderFloor(floor: Floor): { floorEl: HTMLElement, floorUpEl: HTMLElement, floorDownEl: HTMLElement } {
+  const el = createElement(['floor']);
+  el.style.height = `${floor.height}px`;
+
+  const buttonUpEl = createElementButton(['floor__button', 'floor__button--up']);
+  const buttonDownEl = createElementButton(['floor__button', 'floor__button--down']);
+
+  el.append(buttonUpEl, buttonDownEl);
+
+  return {
+    floorEl: el,
+    floorUpEl: buttonUpEl,
+    floorDownEl: buttonDownEl,
+  };
 }
 
 function renderLift(lift: Lift): HTMLElement {

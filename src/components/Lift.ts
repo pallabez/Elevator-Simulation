@@ -1,4 +1,4 @@
-import { DIMENSIONS, LIFT_STATE } from "../constant/constant";
+import { DIMENSIONS, LIFT_EVENT, LIFT_STATE } from "../constant/constant";
 import { EventEmitter } from 'events';
 
 export class Lift {
@@ -9,17 +9,16 @@ export class Lift {
   state: string;
   queue: Array<number>;
   startTime: Date;
-
   eventEmitter: EventEmitter;
 
-  constructor(position: number, floor: number = 0, state: string = LIFT_STATE.CLOSED) {
+  constructor(eventEmitter: EventEmitter, position: number, floor: number = 0, state: string = LIFT_STATE.CLOSED) {
     this.position = position;
     this.floor = floor;
     this.targetFloor = floor;
     this.state = state;
     this.queue = [];
 
-    this.eventEmitter = new EventEmitter();
+    this.eventEmitter = eventEmitter;
   }
 
   getLiftState(): Lift {
@@ -30,18 +29,21 @@ export class Lift {
   }
 
   moveToFloor(floor: number) {
-    if (!this.isLiftIdle()) {
-      this.queue.push(floor);
-      return;
-    };
+    if (!this.isLiftIdle()) return this.queue.push(floor);
+
     this.startTime = new Date();
     this.targetFloor = floor;
     this.startFloor = this.floor;
     this.state = LIFT_STATE.MOVING;
+    this.eventEmitter.emit(LIFT_EVENT.STARTED_MOVING);
   }
 
   isLiftIdle(): Boolean {
     return this.state === LIFT_STATE.CLOSED;
+  }
+
+  on(eventName: string, callback: () => {}) {
+    this.eventEmitter.on(eventName, callback);
   }
 
   private updatePosition() {
@@ -52,8 +54,11 @@ export class Lift {
     if (currentTime > endTime) {
       this.state = LIFT_STATE.CLOSED;
       this.floor = this.targetFloor;
-      if (this.queue.length) this.moveToFloor(this.queue.shift())
-      return;
+      this.eventEmitter.emit(LIFT_EVENT.FLOOR_REACHED);
+
+      if (this.queue.length) return this.moveToFloor(this.queue.shift());
+
+      this.eventEmitter.emit(LIFT_EVENT.IS_IDLE);
     }
 
     if (this.targetFloor === this.floor) return;
@@ -63,10 +68,5 @@ export class Lift {
     this.floor = this.targetFloor > this.floor
       ? this.startFloor + floorCovered
       : this.startFloor - floorCovered;
-  }
-
-  on(eventName: string, callback: () => {}) {
-    // Add an event listener.
-    this.eventEmitter.on(eventName, callback);
   }
 }

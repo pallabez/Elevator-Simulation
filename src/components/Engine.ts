@@ -1,19 +1,36 @@
-import { DIMENSIONS, LIFT_STATE } from "../constant/constant";
+import { EventEmitter } from "events";
+import { DIMENSIONS, FLOOR_EVENT, LIFT_EVENT, LIFT_STATE } from "../constant/constant";
 import { Building } from "./Building";
 import { Floor } from "./Floor";
 import { Lift } from "./Lift";
 
 export class Engine {
-  lifts: Array<Lift>
-  floors: Array<Floor>
+  lifts: Array<Lift>;
+  floors: Array<Floor>;
   building: Building;
-  queue: Array<number>
+  queue: Array<number>;
+  eventEmitter: EventEmitter;
 
-  constructor(building: Building) {
+  constructor(building: Building, eventEmitter: EventEmitter) {
     this.building = building;
     this.lifts = building.lifts;
     this.floors = building.floors;
     this.queue = [];
+    this.eventEmitter = eventEmitter;
+
+    eventEmitter.on(FLOOR_EVENT.FLOOR_BUTTON_UP_CLICK, (floor) => {
+      this.requestLiftToFloor(floor);
+    })
+
+    eventEmitter.on(FLOOR_EVENT.FLOOR_BUTTON_DOWN_CLICK, (floor) => {
+      this.requestLiftToFloor(floor);
+    })
+
+    eventEmitter.on(LIFT_EVENT.IS_IDLE, () => {
+      if(this.queue.length === 0) return;
+
+      this.requestLiftToFloor(this.queue.shift());
+    })
   }
 
   requestLiftToFloor(floor: number) {

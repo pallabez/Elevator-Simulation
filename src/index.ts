@@ -3,28 +3,25 @@ import { Lift } from './components/Lift';
 import { Building } from './components/Building';
 import { Renderer } from './components/Renderer';
 import { Floor } from './components/Floor';
+import { EventEmitter } from 'events';
 
 console.clear();
 
 function initLifts(numberOfLifts = 2, numberOfFloors = 4) {
   const lifts = [];
   const floors = [];
+  const eventEmitter = new EventEmitter();
   
   for(let i = 1; i <= numberOfLifts; i++) {
-    lifts.push(new Lift(i));
+    lifts.push(new Lift(eventEmitter, i));
   }
   for(let i = 0; i < numberOfFloors; i++) {
     floors.push(new Floor(i));
   }
   
   const building = new Building(floors, lifts, document.getElementById('app'));
-  const engine = new Engine(building);
-
-  for(const floor of floors) {
-    floor.setButtonListener(() => engine.requestLiftToFloor(floor.floorNumber));
-  }
-
-  const renderer = new Renderer(building);
+  const engine = new Engine(building, eventEmitter);
+  const renderer = new Renderer(building, eventEmitter);
 } 
 
 setTimeout(initLifts, 1000);
