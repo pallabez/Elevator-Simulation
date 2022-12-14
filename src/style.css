@@ -2,41 +2,85 @@
   box-sizing: border-box;
 }
 
-#app {
-  padding-left: 20px;
+:root {
+  --rust-700:#3e0000;
+  --rust-500: #6b1d09;
+  --rust-400: #9a542e;
+  --rust-300: #bf935c;
+  --rust-200: #d0c8a8;
+
+  --base-color: var(--rust-300);
+  --primary-color: var(--rust-500);
+  --text-color: var(--rust-300);
+  --border-color: var(--rust-700);
 }
 
 .building {
-  width: 100%;
+  min-width: 100%;
   position: relative;
-}
-
-.floor {
-  border: 1px solid;
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .lift {
   position: absolute;
   bottom: 0;
-  border: 1px solid;
-  height: 50px;
-  width: 30px;
+  border: 2px solid var(--border-color);
+  height: 5em;
+  width: 2.9em;
+  display: flex;
+  overflow-x: hidden;
+}
+
+.lift__door {
+  flex-grow: 1;
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: transform 1s linear;
+}
+
+.lift--open > .door--left.lift__door {
+  transform: translateX(-100%);
+}
+
+.lift--open > .door--right.lift__door {
+  transform: translateX(100%);
+}
+
+.floor {
+  border-color: var(--border-color);
+  border-style: solid;
+  border-bottom-width: 4px;
+  background-color: var(--base-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .floor__button {
-  position: absolute;
-  padding: 10px;
-  transform: translateX(calc(-100% - 5px));
+  left: 15px;
+  position: relative;
+  height: 3.2em;
+  width: 5em;
   border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 16px;
+
+  transition: transform 0.05s linear;
+}
+
+.floor__button:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
 }
 
 .floor__button--up {
-  background-color: greenyellow;
-  top: 10px;
+  background-color: var(--primary-color);
 }
 
 .floor__button--down {
-  background-color: red;
-  bottom: 10px;
+  background-color: var(--primary-color);
 }

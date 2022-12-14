@@ -20,6 +20,7 @@ export class Building {
   }
 
   buildingAdapter() {
-    return createElement(['building']);
+    const el = createElement(['building']);
+    return el;
   }
 }

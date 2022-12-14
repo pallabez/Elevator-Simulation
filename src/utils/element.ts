@@ -2,7 +2,7 @@ export const createElement = (
   className: Array<string> = [],
   attributes: { [value: string]: string } = {},
   type: string = 'div',
-): any => {
+): HTMLElement => {
   try {
     const el = document.createElement(type);
     className.forEach(name => el.classList.add(name));
@@ -20,6 +20,6 @@ export const createElement = (
 export const createElementButton = (
   className: Array<string> = [],
   attributes: { [value: string]: string } = {},
-): HTMLButtonElement => {
+): HTMLElement => {
   return createElement(className, attributes, 'button');
 }

@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { DIMENSIONS, FLOOR_EVENT, LIFT_EVENT, LIFT_STATE } from "../constant/constant";
+import { FLOOR_EVENT, LIFT_EVENT, LIFT_STATE } from "../constant/constant";
 import { Building } from "./Building";
 import { Floor } from "./Floor";
 import { Lift } from "./Lift";

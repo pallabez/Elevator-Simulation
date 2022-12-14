@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { DIMENSIONS, FLOOR_EVENT } from "../constant/constant";
+import { DIMENSIONS, FLOOR_EVENT, LIFT_EVENT } from "../constant/constant";
 import { createElement, createElementButton } from "../utils/element";
 import { Building } from "./Building";
 import { Floor } from "./Floor";
@@ -48,6 +48,21 @@ export class Renderer {
     this.lifts.forEach(liftRef => buildingRef.append(liftRef.liftEl));
     this.canvas.append(buildingRef);
 
+    const buildingWidth = `${(DIMENSIONS.LIFT_GAP + 40) * this.lifts.length + DIMENSIONS.FIRST_LIFT_GAP}px`;
+    this.building.buildingElement.style.width = buildingWidth;
+
+    this.eventEmitter.on(LIFT_EVENT.FLOOR_REACHED, (liftPosition) => {
+      const liftRef = this.lifts.find(liftRef => liftRef.lift.position === liftPosition);
+      
+      liftRef.liftEl.classList.add('lift--open');
+    })
+    
+    this.eventEmitter.on(LIFT_EVENT.DOOR_OPEN, (liftPosition) => {
+      const liftRef = this.lifts.find(liftRef => liftRef.lift.position === liftPosition);
+      
+      liftRef.liftEl.classList.remove('lift--open');
+    })
+
     requestAnimationFrame(() => this.rerender());
   };
 
@@ -94,6 +109,8 @@ function renderFloor(floor: Floor): { floorEl: HTMLElement, floorUpEl: HTMLEleme
   const buttonUpEl = createElementButton(['floor__button', 'floor__button--up']);
   const buttonDownEl = createElementButton(['floor__button', 'floor__button--down']);
 
+  buttonDownEl.textContent = 'Down';
+  buttonUpEl.textContent = 'Up';
   el.append(buttonUpEl, buttonDownEl);
 
   return {
@@ -104,7 +121,7 @@ function renderFloor(floor: Floor): { floorEl: HTMLElement, floorUpEl: HTMLEleme
 }
 
 function renderLift(lift: Lift): HTMLElement {
-  const left = lift.position * DIMENSIONS.LIFT_GAP;
+  const left = lift.position * DIMENSIONS.LIFT_GAP + DIMENSIONS.FIRST_LIFT_GAP;
   const translateY = lift.floor * DIMENSIONS.FLOOR_HEIGHT_PX;
 
   const styleLeft = `${left}px`
@@ -113,6 +130,11 @@ function renderLift(lift: Lift): HTMLElement {
   const el = createElement(['lift']);
   el.style.left = styleLeft;
   el.style.transform = styleTranslate;
+
+  const doorLeft = createElement(['lift__door', 'door--left']);
+  const doorRight = createElement(['lift__door', 'door--right']);
+
+  el.append(doorLeft, doorRight);
 
   return el;
 }
