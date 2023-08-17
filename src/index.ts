@@ -11,7 +11,7 @@ function initLifts(numberOfLifts = 2, numberOfFloors = 4) {
   const lifts = [];
   const floors = [];
   const eventEmitter = new EventEmitter();
-  
+
   for(let i = 1; i <= numberOfLifts; i++) {
     lifts.push(new Lift(eventEmitter, i));
   }

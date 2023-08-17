@@ -55,15 +55,10 @@ export class Lift {
       this.state = LIFT_STATE.CLOSED;
       this.floor = this.targetFloor;
       this.eventEmitter.emit(LIFT_EVENT.FLOOR_REACHED, this.position);
-      setTimeout(() => {
-        this.eventEmitter.emit(LIFT_EVENT.DOOR_OPEN, this.position);
-      }, 1000);
-      
-      if (this.queue.length) return this.moveToFloor(this.queue.shift());
+    setTimeout(() => this.eventEmitter.emit(LIFT_EVENT.DOOR_OPEN, this.position), 1000);
 
-      setTimeout(() => {
-        this.eventEmitter.emit(LIFT_EVENT.IS_IDLE);
-      }, 2000);
+      if (this.queue.length) return this.moveToFloor(this.queue.shift());
+      setTimeout(() => this.eventEmitter.emit(LIFT_EVENT.IS_IDLE), 2000);
     }
 
     if (this.targetFloor === this.floor) return;

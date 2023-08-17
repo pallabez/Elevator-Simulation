@@ -1,6 +1,8 @@
-/node_modules
-/dist
-.cache
-/dist
+/.parcel-cache
+/.cache
+/.yarn
 /build
+/dist
 /coverage
+/dist
+/node_modules
