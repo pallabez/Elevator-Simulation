@@ -4,6 +4,7 @@ import { Building } from './components/Building';
 import { Renderer } from './components/Renderer';
 import { Floor } from './components/Floor';
 import { EventEmitter } from 'events';
+import { Debugger } from './components/Debugger';
 
 console.clear();
 
@@ -22,6 +23,9 @@ function initLifts(numberOfLifts = 2, numberOfFloors = 4) {
   const building = new Building(floors, lifts, document.getElementById('app'));
   const engine = new Engine(building, eventEmitter);
   const renderer = new Renderer(building, eventEmitter);
+  const debug = new Debugger(building, eventEmitter);
+
+  debug.printStateOnEvent();
 } 
 
 setTimeout(initLifts, 1000);
