@@ -23,4 +23,8 @@ export class Building {
     const el = createElement(['building']);
     return el;
   }
+
+  getLift(position: number): Lift {
+    return this.lifts[position];
+  }
 }

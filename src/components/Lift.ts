@@ -21,6 +21,11 @@ export class Lift {
     this.eventEmitter = eventEmitter;
   }
 
+  startDoorAnimation() {
+    setTimeout(() => this.eventEmitter.emit(LIFT_EVENT.DOOR_OPEN, this.position), 1000);
+    setTimeout(() => this.eventEmitter.emit(LIFT_EVENT.IS_IDLE), 2000);
+  }
+
   getLiftState(): Lift {
     if (this.isLiftIdle()) return this;
 
@@ -42,31 +47,29 @@ export class Lift {
     return this.state === LIFT_STATE.CLOSED;
   }
 
-  on(eventName: string, callback: () => {}) {
-    this.eventEmitter.on(eventName, callback);
-  }
-
   private updatePosition() {
     const currentTime = Date.now();
     const distance = Math.abs(this.targetFloor - this.startFloor);
-    const endTime = distance * DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_MILLI_SECONDS + this.startTime.getTime();
+    const timeToReach = distance * DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_MILLI_SECONDS + this.startTime.getTime();
+    const timeToBeIdle = timeToReach + DIMENSIONS.LIFT_TIME_TO_OPEN_DOOR_IN_MILLI_SECONDS * 2;
 
-    if (currentTime > endTime) {
+    if (currentTime > timeToReach && this.state === LIFT_STATE.MOVING) {
+      this.eventEmitter.emit(LIFT_EVENT.FLOOR_REACHED, this.position);
+      this.startDoorAnimation();
+      this.state = LIFT_STATE.OPENING;
+    };
+
+    if (currentTime > timeToBeIdle && this.state !== LIFT_STATE.CLOSED) {
       this.state = LIFT_STATE.CLOSED;
       this.floor = this.targetFloor;
-      this.eventEmitter.emit(LIFT_EVENT.FLOOR_REACHED, this.position);
-    setTimeout(() => this.eventEmitter.emit(LIFT_EVENT.DOOR_OPEN, this.position), 1000);
-
-      if (this.queue.length) return this.moveToFloor(this.queue.shift());
-      setTimeout(() => this.eventEmitter.emit(LIFT_EVENT.IS_IDLE), 2000);
     }
 
-    if (this.targetFloor === this.floor) return;
-
-    const durationCovered = currentTime - this.startTime.getTime();
-    const floorCovered = durationCovered / DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_MILLI_SECONDS;
-    this.floor = this.targetFloor > this.floor
-      ? this.startFloor + floorCovered
-      : this.startFloor - floorCovered;
+    if (this.state == LIFT_STATE.MOVING) {
+      const durationCovered = currentTime - this.startTime.getTime();
+      const floorCovered = durationCovered / DIMENSIONS.LIFT_TIME_TO_COVER_FLOOR_IN_MILLI_SECONDS;
+      this.floor = this.targetFloor > this.floor
+        ? this.startFloor + floorCovered
+        : this.startFloor - floorCovered;
+    }
   }
 }
