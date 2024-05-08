@@ -8,7 +8,7 @@ import { Debugger } from './components/Debugger';
 
 console.clear();
 
-function initLifts(numberOfLifts = 2, numberOfFloors = 4) {
+function initLifts(numberOfLifts = 2, numberOfFloors = 5) {
   const lifts = [];
   const floors = [];
   const eventEmitter = new EventEmitter();

@@ -19,11 +19,11 @@ export class Engine {
     this.eventEmitter = eventEmitter;
 
     eventEmitter.on(FLOOR_EVENT.FLOOR_BUTTON_UP_CLICK, (floor) => {
-      this.requestLiftToFloor(floor);
+      this.requestLiftToFloor(floor * 1000);
     })
 
     eventEmitter.on(FLOOR_EVENT.FLOOR_BUTTON_DOWN_CLICK, (floor) => {
-      this.requestLiftToFloor(floor);
+      this.requestLiftToFloor(floor * 1000);
     })
 
     eventEmitter.on(LIFT_EVENT.IS_IDLE, () => {

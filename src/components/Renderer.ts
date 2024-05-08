@@ -96,7 +96,7 @@ function updateLiftElement(liftRef: LiftRef) {
 
   const liftState = lift.getLiftState();
 
-  const translateY = liftState.floor * DIMENSIONS.FLOOR_HEIGHT_PX;
+  const translateY = (liftState.floor / 1000) * DIMENSIONS.FLOOR_HEIGHT_PX;
   const styleTranslate = `translateY(-${translateY}px) translateX(-100%)`
 
   liftEl.style.transform = styleTranslate;

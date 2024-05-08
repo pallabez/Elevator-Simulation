@@ -3,16 +3,23 @@
 }
 
 :root {
-  --rust-700:#3e0000;
+  --rust-700:#512c2c;
   --rust-500: #6b1d09;
   --rust-400: #9a542e;
   --rust-300: #bf935c;
   --rust-200: #d0c8a8;
 
   --base-color: var(--rust-300);
-  --primary-color: var(--rust-500);
+  --primary-color: var(--rust-200);
   --text-color: var(--rust-300);
-  --border-color: var(--rust-700);
+  --border-color: var(--rust-500);
+
+  --lift-color: var(--base-color);
+  --lift-border-color: var(--border-color);
+  --button-color: var(--base-color);
+  --button-text-color: var(--border-color);
+  --floor-bg-color: var(--primary-color);
+  --floor-wall-color: var(--border-color)
 }
 
 .building {
@@ -25,7 +32,7 @@
 .lift {
   position: absolute;
   bottom: 0;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--lift-border-color);
   height: 5em;
   width: 2.9em;
   display: flex;
@@ -35,7 +42,7 @@
 .lift__door {
   flex-grow: 1;
   height: 100%;
-  background-color: var(--primary-color);
+  background-color: var(--lift-color);
   transition: transform 1s linear;
 }
 
@@ -48,10 +55,9 @@
 }
 
 .floor {
-  border-color: var(--border-color);
+  border-color: var(--floor-wall-color);
   border-style: solid;
-  border-bottom-width: 4px;
-  background-color: var(--base-color);
+  background-color: var(--floor-bg-color);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -63,7 +69,7 @@
   height: 3.2em;
   width: 5em;
   border: none;
-  color: var(--text-color);
+  color: var(--button-text-color);
   cursor: pointer;
   border-radius: 10px;
   font-weight: 500;
@@ -78,9 +84,9 @@
 }
 
 .floor__button--up {
-  background-color: var(--primary-color);
+  background-color: var(--button-color);
 }
 
 .floor__button--down {
-  background-color: var(--primary-color);
+  background-color: var(--button-color);
 }
