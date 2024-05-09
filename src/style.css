@@ -4,22 +4,17 @@
 
 :root {
   --rust-700:#512c2c;
-  --rust-500: #6b1d09;
+  --rust-500: #292929;
   --rust-400: #9a542e;
-  --rust-300: #bf935c;
-  --rust-200: #d0c8a8;
+  --rust-300: #82908f;
+  --rust-200: #c0cfcc;
 
-  --base-color: var(--rust-300);
-  --primary-color: var(--rust-200);
-  --text-color: var(--rust-300);
-  --border-color: var(--rust-500);
-
-  --lift-color: var(--base-color);
-  --lift-border-color: var(--border-color);
-  --button-color: var(--base-color);
-  --button-text-color: var(--border-color);
-  --floor-bg-color: var(--primary-color);
-  --floor-wall-color: var(--border-color)
+  --lift-color: var(--rust-700);
+  --lift-border-color: var(--rust-500);
+  --button-color: var(--rust-300);
+  --button-text-color: var(--rust-500);
+  --floor-bg-color: var(--rust-200);
+  --floor-wall-color: var(--rust-500);
 }
 
 .building {
@@ -43,7 +38,9 @@
   flex-grow: 1;
   height: 100%;
   background-color: var(--lift-color);
-  transition: transform 1s linear;
+  /* transition: transform 1s linear; */
+  transition-property: all;
+  transition-timing-function: linear;
 }
 
 .lift--open > .door--left.lift__door {

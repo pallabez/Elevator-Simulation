@@ -25,7 +25,7 @@ export class Lift {
     setTimeout(() => this.eventEmitter.emit(LIFT_EVENT.DOOR_OPEN, this.position), LIFT_STATS.TIME_TO_OPEN_DOOR_IN_MILLI_SECONDS);
     setTimeout(() => {
       this.state = LIFT_STATE.CLOSED;
-      this.eventEmitter.emit(LIFT_EVENT.IS_IDLE)
+      this.eventEmitter.emit(LIFT_EVENT.IS_IDLE, this.position)
     }, LIFT_STATS.TIME_TO_OPEN_DOOR_IN_MILLI_SECONDS * 2);
   }
 
@@ -41,7 +41,7 @@ export class Lift {
     this.targetFloor = floor;
     this.startFloor = this.floor;
     this.state = LIFT_STATE.MOVING;
-    this.eventEmitter.emit(LIFT_EVENT.STARTED_MOVING);
+    this.eventEmitter.emit(LIFT_EVENT.STARTED_MOVING, this.position);
   }
 
   isLiftIdle(): Boolean {

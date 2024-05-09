@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { DIMENSIONS, FLOOR_EVENT, LIFT_EVENT } from "../constant/constant";
+import { DIMENSIONS, FLOOR_EVENT, LIFT_EVENT, LIFT_STATS } from "../constant/constant";
 import { createElement, createElementButton } from "../utils/element";
 import { Building } from "./Building";
 import { Floor } from "./Floor";
@@ -133,6 +133,8 @@ function renderLift(lift: Lift): HTMLElement {
 
   const doorLeft = createElement(['lift__door', 'door--left']);
   const doorRight = createElement(['lift__door', 'door--right']);
+  doorLeft.style.transitionDuration = `${LIFT_STATS.TIME_TO_OPEN_DOOR_IN_MILLI_SECONDS}ms`;
+  doorRight.style.transitionDuration = `${LIFT_STATS.TIME_TO_OPEN_DOOR_IN_MILLI_SECONDS}ms`;
 
   el.append(doorLeft, doorRight);
 
