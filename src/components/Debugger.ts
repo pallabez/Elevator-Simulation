@@ -9,7 +9,6 @@ const FUNCTIONS = {
 export class Debugger {
     building: Building;
     eventEmitter: EventEmitter;
-
     constructor(building: Building, eventEmitter: EventEmitter) {
         this.building = building;
         this.eventEmitter = eventEmitter;

@@ -2,8 +2,8 @@
   "name": "lift-simulation",
   "version": "1.0.0",
   "scripts": {
-    "start": "tsc && parcel index.html --open",
-    "build": "parcel build index.html",
+    "start": "vite",
+    "build": "tsc && vite build",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
@@ -14,13 +14,11 @@
     "events": "^3.3.0"
   },
   "devDependencies": {
-    "@parcel/core": "^2.9.3",
     "@types/events": "^3.0.0",
     "@types/node": "^20.5.0",
     "@vitest/coverage-c8": "^0.33.0",
-    "parcel": "^2.9.3",
     "typescript": "^5.1.6",
+    "vite": "^5.2.11",
     "vitest": "^0.34.2"
-  },
-  "packageManager": "yarn@4.2.2"
+  }
 }
